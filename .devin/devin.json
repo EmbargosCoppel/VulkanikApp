@@ -1,0 +1,9 @@
+{
+  "autostart": [
+    {
+      "command": "npm run start",
+      "name": "Laravel Server",
+      "cwd": "."
+    }
+  ]
+}
