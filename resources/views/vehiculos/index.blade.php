@@ -15,6 +15,17 @@
         </a>
     </div>
 
+    <!-- Búsqueda -->
+    <form method="GET" class="mb-4">
+        <div class="relative">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por marca, modelo o placa..."
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="absolute right-3 top-2.5 text-gray-400">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
+
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -50,7 +61,8 @@
                         <form action="{{ route('vehiculos.destroy', $vehiculo) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Eliminar este vehículo?')">
+                            <button type="button" class="text-red-600 hover:text-red-900" title="Eliminar"
+                                onclick="confirmDelete(this, '¿Eliminar el vehículo {{ $vehiculo->marca }} {{ $vehiculo->modelo }} ({{ $vehiculo->placa }})?')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -63,6 +75,11 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="mt-6">
+        {{ $vehiculos->appends(request()->query())->links() }}
     </div>
 </div>
 </x-app-layout>

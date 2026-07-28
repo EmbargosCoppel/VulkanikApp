@@ -17,9 +17,26 @@ class OrdenTrabajoController extends Controller
         $this->workOrderService = $workOrderService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $ordenes = OrdenTrabajo::with(['vehiculo.cliente', 'mecanico', 'refacciones'])->get();
+        $query = OrdenTrabajo::with(['vehiculo.cliente', 'mecanico']);
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('estado', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('vehiculo', function ($vq) use ($request) {
+                      $vq->where('placa', 'like', '%' . $request->search . '%')
+                         ->orWhere('marca', 'like', '%' . $request->search . '%')
+                         ->orWhere('modelo', 'like', '%' . $request->search . '%');
+                  })
+                  ->orWhereHas('vehiculo.cliente', function ($cq) use ($request) {
+                      $cq->where('nombre', 'like', '%' . $request->search . '%');
+                  });
+            });
+        }
+
+        $ordenes = $query->orderBy('created_at', 'desc')
+            ->paginate(config('taller.pagination.per_page', 15));
         return view('ordenes.index', compact('ordenes'));
     }
 
@@ -69,14 +86,19 @@ class OrdenTrabajoController extends Controller
 
         // Actualizar estado primero si se proporciona
         if (isset($validated['estado'])) {
-            $ordenTrabajo = $this->workOrderService->actualizarEstado($ordenTrabajo, $validated['estado']);
+            try {
+                $ordenTrabajo = $this->workOrderService->actualizarEstado($ordenTrabajo, $validated['estado']);
+            } catch (\InvalidArgumentException $e) {
+                return redirect()->route('ordenes.index')
+                    ->with('error', 'No se puede cambiar el estado: ' . $e->getMessage());
+            }
             unset($validated['estado']);
         }
 
         // Actualizar otros campos
         if (!empty($validated)) {
             $ordenTrabajo->update($validated);
-            
+
             // Recalcular totales si cambió la mano de obra
             if (isset($validated['mano_obra'])) {
                 $this->workOrderService->recalcularTotales($ordenTrabajo);
@@ -94,7 +116,13 @@ class OrdenTrabajoController extends Controller
         ]);
 
         $refaccion = \App\Models\Refaccion::findOrFail($validated['refaccion_id']);
-        $this->workOrderService->agregarRefaccion($ordenTrabajo, $refaccion, $validated['cantidad']);
+
+        try {
+            $this->workOrderService->agregarRefaccion($ordenTrabajo, $refaccion, $validated['cantidad']);
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('ordenes.show', $ordenTrabajo)
+                ->with('error', $e->getMessage());
+        }
 
         return redirect()->route('ordenes.show', $ordenTrabajo)->with('success', 'Refacción agregada exitosamente');
     }

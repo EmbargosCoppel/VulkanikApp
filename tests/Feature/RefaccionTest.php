@@ -110,22 +110,56 @@ class RefaccionTest extends TestCase
 
     public function test_puede_ver_detalle_refaccion(): void
     {
-        $this->markTestSkipped('Saltando prueba de ver detalle debido a problemas con rutas en vista');
+        $refaccion = Refaccion::factory()->create();
+
+        $response = $this->get(route('refacciones.show', $refaccion));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('refaccion');
     }
 
     public function test_puede_editar_refaccion(): void
     {
-        $this->markTestSkipped('Saltando prueba de editar debido a problema con rutas');
+        $refaccion = Refaccion::factory()->create();
+
+        $response = $this->get(route('refacciones.edit', $refaccion));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('refaccion');
     }
 
     public function test_puede_actualizar_refaccion(): void
     {
-        $this->markTestSkipped('Saltando prueba de actualizar debido a problemas de validación');
+        $refaccion = Refaccion::factory()->create();
+
+        $response = $this->put(route('refacciones.update', $refaccion), [
+            'nombre' => 'Filtro de aceite actualizado',
+            'sku' => 'REF-003',
+            'costo' => 55.00,
+            'precio_venta' => 110.00,
+            'stock_actual' => 25,
+            'stock_minimo' => 10,
+            'activo' => true,
+        ]);
+
+        $response->assertRedirect(route('refacciones.index'));
+        $this->assertDatabaseHas('refacciones', [
+            'id' => $refaccion->id,
+            'nombre' => 'Filtro de aceite actualizado',
+            'sku' => 'REF-003',
+        ]);
     }
 
     public function test_puede_eliminar_refaccion(): void
     {
-        $this->markTestSkipped('Saltando prueba de eliminar debido a problemas con soft delete');
+        $refaccion = Refaccion::factory()->create();
+
+        $response = $this->delete(route('refacciones.destroy', $refaccion));
+
+        $response->assertRedirect(route('refacciones.index'));
+        $this->assertSoftDeleted('refacciones', [
+            'id' => $refaccion->id,
+        ]);
     }
 
     public function test_puede_ver_stock_bajo(): void
@@ -206,5 +240,42 @@ class RefaccionTest extends TestCase
         foreach ($refacciones as $refaccion) {
             $this->assertTrue($refaccion->activo);
         }
+    }
+
+    public function test_lista_usa_paginacion(): void
+    {
+        Refaccion::factory()->count(20)->create();
+
+        $response = $this->get(route('refacciones.index'));
+
+        $response->assertStatus(200);
+        $refacciones = $response->viewData('refacciones');
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $refacciones);
+        $this->assertEquals(15, $refacciones->perPage());
+    }
+
+    public function test_busqueda_filtra_por_nombre(): void
+    {
+        Refaccion::factory()->create(['nombre' => 'Filtro de aceite']);
+        Refaccion::factory()->create(['nombre' => 'Filtro de aire']);
+
+        $response = $this->get(route('refacciones.index', ['search' => 'aceite']));
+
+        $response->assertStatus(200);
+        $refacciones = $response->viewData('refacciones');
+        $this->assertCount(1, $refacciones);
+        $this->assertEquals('Filtro de aceite', $refacciones->first()->nombre);
+    }
+
+    public function test_busqueda_filtra_por_sku(): void
+    {
+        Refaccion::factory()->create(['sku' => 'REF-001']);
+        Refaccion::factory()->create(['sku' => 'REF-002']);
+
+        $response = $this->get(route('refacciones.index', ['search' => 'REF-001']));
+
+        $response->assertStatus(200);
+        $refacciones = $response->viewData('refacciones');
+        $this->assertCount(1, $refacciones);
     }
 }

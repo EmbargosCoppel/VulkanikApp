@@ -111,7 +111,7 @@ class ClienteTest extends TestCase
         $response = $this->delete(route('clientes.destroy', $cliente));
 
         $response->assertRedirect(route('clientes.index'));
-        $this->assertDatabaseMissing('clientes', [
+        $this->assertSoftDeleted('clientes', [
             'id' => $cliente->id,
         ]);
     }
@@ -134,5 +134,42 @@ class ClienteTest extends TestCase
             'es_empresa' => true,
             'nombre_empresa' => 'Empresa SA de CV',
         ]);
+    }
+
+    public function test_busqueda_filtra_por_nombre(): void
+    {
+        Cliente::factory()->create(['nombre' => 'Juan Pérez']);
+        Cliente::factory()->create(['nombre' => 'María López']);
+
+        $response = $this->get(route('clientes.index', ['search' => 'Juan']));
+
+        $response->assertStatus(200);
+        $clientes = $response->viewData('clientes');
+        $this->assertCount(1, $clientes);
+        $this->assertEquals('Juan Pérez', $clientes->first()->nombre);
+    }
+
+    public function test_busqueda_filtra_por_email(): void
+    {
+        Cliente::factory()->create(['email' => 'juan@example.com']);
+        Cliente::factory()->create(['email' => 'maria@example.com']);
+
+        $response = $this->get(route('clientes.index', ['search' => 'juan']));
+
+        $response->assertStatus(200);
+        $clientes = $response->viewData('clientes');
+        $this->assertCount(1, $clientes);
+    }
+
+    public function test_lista_usa_paginacion(): void
+    {
+        Cliente::factory()->count(20)->create();
+
+        $response = $this->get(route('clientes.index'));
+
+        $response->assertStatus(200);
+        $clientes = $response->viewData('clientes');
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $clientes);
+        $this->assertEquals(15, $clientes->perPage());
     }
 }

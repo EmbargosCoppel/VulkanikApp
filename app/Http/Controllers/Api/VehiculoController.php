@@ -56,6 +56,12 @@ class VehiculoController extends Controller
         return response()->json($vehiculo);
     }
 
+    public function indexByCliente($cliente): JsonResponse
+    {
+        $vehiculos = Vehiculo::where('cliente_id', $cliente)->with('cliente')->get();
+        return response()->json($vehiculos);
+    }
+
     public function destroy(Vehiculo $vehiculo): JsonResponse
     {
         $vehiculo->delete();

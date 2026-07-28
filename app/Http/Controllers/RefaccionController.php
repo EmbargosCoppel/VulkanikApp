@@ -15,9 +15,21 @@ class RefaccionController extends Controller
         $this->inventoryService = $inventoryService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $refacciones = Refaccion::where('activo', true)->whereNull('deleted_at')->get();
+        $query = Refaccion::where('activo', true)
+            ->withCount('ordenesTrabajo');
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->search . '%')
+                  ->orWhere('sku', 'like', '%' . $request->search . '%')
+                  ->orWhere('proveedor', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $refacciones = $query->orderBy('nombre')
+            ->paginate(config('taller.pagination.per_page', 15));
         return view('refacciones.index', compact('refacciones'));
     }
 

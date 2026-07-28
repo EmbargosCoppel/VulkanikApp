@@ -41,7 +41,7 @@
                 </p>
                 <p><span class="font-medium">Costo:</span> ${{ number_format($refaccion->costo, 2) }}</p>
                 <p><span class="font-medium">Precio Venta:</span> ${{ number_format($refaccion->precio_venta, 2) }}</p>
-                <p><span class="font-medium">Margen:</span> 
+                <p><span class="font-medium">Margen:</span>
                     @if($refaccion->costo > 0)
                         {{ number_format((($refaccion->precio_venta - $refaccion->costo) / $refaccion->costo) * 100, 2) }}%
                     @else
@@ -56,7 +56,7 @@
         <a href="{{ route('refacciones.stock', ['refaccion' => $refaccion]) }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             <i class="fas fa-boxes mr-2"></i>Actualizar Stock
         </a>
-        <a href="{{ route('refacciones.edit', ['refaccione' => $refaccion]) }}" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+        <a href="{{ route('refacciones.edit', ['refaccion' => $refaccion]) }}" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
             <i class="fas fa-edit mr-2"></i>Editar
         </a>
     </div>

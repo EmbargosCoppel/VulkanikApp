@@ -18,9 +18,12 @@
         @else
             <p class="mt-2 text-sm text-gray-600">
                 Your email address is unverified.
-                <x-primary-button class="ms-2" href="{{ route('verification.send') }}">
-                    Click here to re-send the verification email.
-                </x-primary-button>
+                <form method="POST" action="{{ route('verification.resend') }}" class="mt-2">
+                    @csrf
+                    <x-primary-button>
+                        Re-send verification email
+                    </x-primary-button>
+                </form>
             </p>
         @endif
     </div>

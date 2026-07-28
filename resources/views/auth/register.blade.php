@@ -16,17 +16,6 @@
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
         </div>
 
-        <!-- Role -->
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Rol')" />
-            <select id="role" name="role" required class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                <option value="">Selecciona un rol</option>
-                <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
-                <option value="mecanico" {{ old('role') === 'mecanico' ? 'selected' : '' }}>Mecánico</option>
-            </select>
-            <x-input-error class="mt-2" :messages="$errors->get('role')" />
-        </div>
-
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />

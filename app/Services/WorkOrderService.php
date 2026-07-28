@@ -4,10 +4,32 @@ namespace App\Services;
 
 use App\Models\OrdenTrabajo;
 use App\Models\Refaccion;
+use App\Services\States\DiagnosticoState;
+use App\Services\States\EsperandoPiezasState;
+use App\Services\States\FinalizadoState;
+use App\Services\States\OrdenStateInterface;
+use App\Services\States\ReparacionState;
 use Illuminate\Support\Facades\DB;
 
 class WorkOrderService
 {
+    private array $stateMap;
+
+    public function __construct()
+    {
+        $this->stateMap = [
+            'diagnóstico' => new DiagnosticoState(),
+            'esperando_piezas' => new EsperandoPiezasState(),
+            'reparación' => new ReparacionState(),
+            'finalizado' => new FinalizadoState(),
+        ];
+    }
+
+    public function getState(string $estado): OrdenStateInterface
+    {
+        return $this->stateMap[$estado] ?? throw new \InvalidArgumentException("Estado inválido: {$estado}");
+    }
+
     public function crearOrden(array $datos): OrdenTrabajo
     {
         return DB::transaction(function () use ($datos) {
@@ -25,23 +47,35 @@ class WorkOrderService
 
     public function actualizarEstado(OrdenTrabajo $orden, string $nuevoEstado): OrdenTrabajo
     {
-        if (!$this->puedeCambiarA($orden->estado, $nuevoEstado)) {
-            throw new \InvalidArgumentException("No se puede cambiar de {$orden->estado} a {$nuevoEstado}");
+        $stateActual = $this->getState($orden->estado);
+        $nuevoState = $this->getState($nuevoEstado);
+
+        if (!$stateActual->puedeCambiarEstado()) {
+            throw new \InvalidArgumentException("La orden en estado {$orden->estado} no puede cambiar de estado");
+        }
+
+        if ($stateActual->siguienteEstado() !== $nuevoEstado && $nuevoEstado !== 'finalizado') {
+            $transicionesValidas = $this->obtenerTransicionesValidas($orden->estado);
+            if (!in_array($nuevoEstado, $transicionesValidas)) {
+                throw new \InvalidArgumentException("No se puede cambiar de {$orden->estado} a {$nuevoEstado}");
+            }
         }
 
         $orden->estado = $nuevoEstado;
-        
+
         if ($nuevoEstado === 'finalizado') {
             $orden->fecha_salida = now();
         }
-        
+
         $orden->save();
         return $orden;
     }
 
     public function agregarRefaccion(OrdenTrabajo $orden, Refaccion $refaccion, int $cantidad): void
     {
-        if (!$orden->puedeAgregarRefacciones()) {
+        $state = $this->getState($orden->estado);
+
+        if (!$state->puedeAgregarRefacciones()) {
             throw new \InvalidArgumentException("No se pueden agregar refacciones a una orden en estado {$orden->estado}");
         }
 
@@ -69,7 +103,7 @@ class WorkOrderService
     {
         $subtotalRefacciones = $orden->refacciones->sum('pivot.subtotal');
         $subtotal = $subtotalRefacciones + $orden->mano_obra;
-        $iva = $subtotal * 0.16;
+        $iva = $subtotal * config('taller.iva', 0.16);
         $total = $subtotal + $iva;
 
         return [
@@ -84,7 +118,7 @@ class WorkOrderService
     public function recalcularTotales(OrdenTrabajo $orden): void
     {
         $totales = $this->calcularTotales($orden);
-        
+
         $orden->update([
             'subtotal' => $totales['subtotal'],
             'iva' => $totales['iva'],
@@ -92,15 +126,15 @@ class WorkOrderService
         ]);
     }
 
-    private function puedeCambiarA(string $estadoActual, string $nuevoEstado): bool
+    public function obtenerTransicionesValidas(string $estadoActual): array
     {
-        $transicionesValidas = [
+        $transiciones = [
             'diagnóstico' => ['esperando_piezas', 'reparación', 'finalizado'],
             'esperando_piezas' => ['reparación', 'finalizado'],
             'reparación' => ['finalizado'],
             'finalizado' => [],
         ];
 
-        return in_array($nuevoEstado, $transicionesValidas[$estadoActual] ?? []);
+        return $transiciones[$estadoActual] ?? [];
     }
 }

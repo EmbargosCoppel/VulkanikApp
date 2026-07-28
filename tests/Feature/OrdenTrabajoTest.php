@@ -113,7 +113,27 @@ class OrdenTrabajoTest extends TestCase
 
     public function test_validacion_transicion_estado_valida(): void
     {
-        $this->markTestSkipped('Saltando prueba de transición de estado');
+        // No se puede transicionar de 'finalizado' a otro estado
+        $ordenFinalizada = OrdenTrabajo::factory()->create(['estado' => 'finalizado']);
+
+        $response = $this->put(route('ordenes.update', $ordenFinalizada), [
+            'estado' => 'reparación',
+        ]);
+
+        $response->assertRedirect(route('ordenes.index'));
+        $ordenFinalizada->refresh();
+        $this->assertEquals('finalizado', $ordenFinalizada->estado);
+
+        // No se puede transicionar de 'esperando_piezas' a 'diagnóstico' (transición inválida)
+        $ordenEsperando = OrdenTrabajo::factory()->create(['estado' => 'esperando_piezas']);
+
+        $response = $this->put(route('ordenes.update', $ordenEsperando), [
+            'estado' => 'diagnóstico',
+        ]);
+
+        $response->assertRedirect(route('ordenes.index'));
+        $ordenEsperando->refresh();
+        $this->assertEquals('esperando_piezas', $ordenEsperando->estado);
     }
 
     public function test_puede_actualizar_mano_obra(): void
@@ -151,12 +171,36 @@ class OrdenTrabajoTest extends TestCase
 
     public function test_no_puede_agregar_refaccion_orden_finalizada(): void
     {
-        $this->markTestSkipped('Saltando prueba de orden finalizada');
+        $orden = OrdenTrabajo::factory()->create(['estado' => 'finalizado']);
+        $refaccion = Refaccion::factory()->create(['stock_actual' => 10]);
+
+        $response = $this->post(route('ordenes.agregarRefaccion', $orden), [
+            'refaccion_id' => $refaccion->id,
+            'cantidad' => 2,
+        ]);
+
+        $response->assertRedirect(route('ordenes.show', $orden));
+        $this->assertDatabaseMissing('orden_refaccion', [
+            'orden_trabajo_id' => $orden->id,
+            'refaccion_id' => $refaccion->id,
+        ]);
     }
 
     public function test_no_puede_agregar_refaccion_sin_suficiente_stock(): void
     {
-        $this->markTestSkipped('Saltando prueba de stock insuficiente');
+        $orden = OrdenTrabajo::factory()->create(['estado' => 'diagnóstico']);
+        $refaccion = Refaccion::factory()->create(['stock_actual' => 1]);
+
+        $response = $this->post(route('ordenes.agregarRefaccion', $orden), [
+            'refaccion_id' => $refaccion->id,
+            'cantidad' => 5,
+        ]);
+
+        $response->assertRedirect(route('ordenes.show', $orden));
+        $this->assertDatabaseMissing('orden_refaccion', [
+            'orden_trabajo_id' => $orden->id,
+            'refaccion_id' => $refaccion->id,
+        ]);
     }
 
     public function test_metodo_puede_agregar_refacciones(): void

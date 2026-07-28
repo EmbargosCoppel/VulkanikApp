@@ -9,7 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [DashboardController::class, 'index'])
-    ->middleware('auth')
+    ->middleware(['auth'])
     ->name('dashboard');
 
 // Profile
@@ -25,20 +25,20 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])
     ->middleware('auth')
     ->name('profile.destroy');
 
-// Clientes
-Route::resource('clientes', ClienteController::class)->middleware('auth');
+// Clientes - solo admin
+Route::resource('clientes', ClienteController::class)->middleware(['auth', 'role:admin']);
 
-// Vehículos
-Route::resource('vehiculos', VehiculoController::class)->middleware('auth');
+// Vehículos - admin y mecánico
+Route::resource('vehiculos', VehiculoController::class)->middleware(['auth', 'role:admin,mecanico']);
 
-// Refacciones
-Route::get('refacciones/stock-bajo', [RefaccionController::class, 'stockBajo'])->name('refacciones.stock-bajo')->middleware('auth');
-Route::get('refacciones/{refaccion}/stock', [RefaccionController::class, 'stock'])->name('refacciones.stock')->middleware('auth');
-Route::put('refacciones/{refaccion}/stock', [RefaccionController::class, 'actualizarStock'])->name('refacciones.actualizarStock')->middleware('auth');
-Route::resource('refacciones', RefaccionController::class)->middleware('auth');
+// Refacciones - solo admin
+Route::get('refacciones/stock-bajo', [RefaccionController::class, 'stockBajo'])->name('refacciones.stock-bajo')->middleware(['auth', 'role:admin']);
+Route::get('refacciones/{refaccion}/stock', [RefaccionController::class, 'stock'])->name('refacciones.stock')->middleware(['auth', 'role:admin']);
+Route::put('refacciones/{refaccion}/stock', [RefaccionController::class, 'actualizarStock'])->name('refacciones.actualizarStock')->middleware(['auth', 'role:admin']);
+Route::resource('refacciones', RefaccionController::class, ['parameters' => ['refacciones' => 'refaccion']])->middleware(['auth', 'role:admin']);
 
-// Órdenes de Trabajo
-Route::resource('ordenes', OrdenTrabajoController::class, ['parameters' => ['ordenes' => 'ordenTrabajo']])->middleware('auth');
-Route::post('ordenes/{ordenTrabajo}/refacciones', [OrdenTrabajoController::class, 'agregarRefaccion'])->name('ordenes.agregarRefaccion')->middleware('auth');
+// Órdenes de Trabajo - admin y mecánico
+Route::resource('ordenes', OrdenTrabajoController::class, ['parameters' => ['ordenes' => 'ordenTrabajo']])->middleware(['auth', 'role:admin,mecanico']);
+Route::post('ordenes/{ordenTrabajo}/refacciones', [OrdenTrabajoController::class, 'agregarRefaccion'])->name('ordenes.agregarRefaccion')->middleware(['auth', 'role:admin,mecanico']);
 
 require __DIR__.'/auth.php';

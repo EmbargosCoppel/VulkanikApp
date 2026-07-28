@@ -8,9 +8,20 @@ use Illuminate\Http\Request;
 
 class VehiculoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vehiculos = Vehiculo::with('cliente')->get();
+        $query = Vehiculo::with(['cliente', 'ordenesTrabajo']);
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('marca', 'like', '%' . $request->search . '%')
+                  ->orWhere('modelo', 'like', '%' . $request->search . '%')
+                  ->orWhere('placa', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $vehiculos = $query->orderBy('marca')
+            ->paginate(config('taller.pagination.per_page', 15));
         return view('vehiculos.index', compact('vehiculos'));
     }
 

@@ -159,7 +159,7 @@ class VehiculoTest extends TestCase
         $response = $this->delete(route('vehiculos.destroy', $vehiculo));
 
         $response->assertRedirect(route('vehiculos.index'));
-        $this->assertDatabaseMissing('vehiculos', [
+        $this->assertSoftDeleted('vehiculos', [
             'id' => $vehiculo->id,
         ]);
     }
@@ -172,5 +172,42 @@ class VehiculoTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertNotNull($vehiculo->cliente);
+    }
+
+    public function test_lista_usa_paginacion(): void
+    {
+        Vehiculo::factory()->count(20)->create();
+
+        $response = $this->get(route('vehiculos.index'));
+
+        $response->assertStatus(200);
+        $vehiculos = $response->viewData('vehiculos');
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $vehiculos);
+        $this->assertEquals(15, $vehiculos->perPage());
+    }
+
+    public function test_busqueda_filtra_por_marca(): void
+    {
+        Vehiculo::factory()->create(['marca' => 'Toyota', 'modelo' => 'Corolla']);
+        Vehiculo::factory()->create(['marca' => 'Honda', 'modelo' => 'Civic']);
+
+        $response = $this->get(route('vehiculos.index', ['search' => 'Toyota']));
+
+        $response->assertStatus(200);
+        $vehiculos = $response->viewData('vehiculos');
+        $this->assertCount(1, $vehiculos);
+        $this->assertEquals('Toyota', $vehiculos->first()->marca);
+    }
+
+    public function test_busqueda_filtra_por_placa(): void
+    {
+        Vehiculo::factory()->create(['placa' => 'ABC123']);
+        Vehiculo::factory()->create(['placa' => 'XYZ789']);
+
+        $response = $this->get(route('vehiculos.index', ['search' => 'ABC123']));
+
+        $response->assertStatus(200);
+        $vehiculos = $response->viewData('vehiculos');
+        $this->assertCount(1, $vehiculos);
     }
 }
