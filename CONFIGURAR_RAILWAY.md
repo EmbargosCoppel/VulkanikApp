@@ -133,8 +133,9 @@ PAYMENT_CURRENCY=mxn
 
 1. **Verificar logs de error**:
    - Ve a la pestaña **"Console"** en Railway
+   - Click en **"Deploy Logs"** para ver los logs del deployment
    - Busca líneas en rojo o que digan "ERROR"
-   - Copia el mensaje de error exacto
+   - Si no hay errores en Console, revisa la pestaña **"Deployments"** y click en el último deploy para ver los logs
 
 2. **Verificar variables de entorno**:
    - Asegúrate de que TODAS estas variables estén configuradas:
@@ -165,12 +166,20 @@ PAYMENT_CURRENCY=mxn
    - Si está en rojo, espera 1-2 minutos o reinicia el servicio
 
 4. **Verificar migraciones**:
-   - En la pestaña **"Console"**, busca si hubo errores en las migraciones
+   - En la pestaña **"Deploy Logs"**, busca si hubo errores en las migraciones
    - Las migraciones se ejecutan automáticamente en el deploy
+   - Deberías ver mensajes como "Migrating: ..." o "Migrated: ..."
 
 5. **Solución más común**:
    - Si el error es de base de datos, verifica que las variables `${{MySQL.*}}` estén correctas
    - Si el error es de APP_KEY, regenera la clave con: `php artisan key:generate`
+   - Si no hay errores en los logs, intenta hacer un nuevo deploy manualmente
+
+6. **Si no encuentras el error**:
+   - Ve a la pestaña **"Deployments"**
+   - Click en el último deployment
+   - Revisa los logs completos del build y deploy
+   - Busca cualquier línea en rojo o advertencia
 
 ### No se conecta a la base de datos
 
