@@ -5,7 +5,7 @@ services:
     plan: free
     buildCommand: |
       composer install --no-dev --optimize-autoloader
-      npm install
+      npm install --legacy-peer-deps
       npm run build
       php artisan config:cache
       php artisan route:cache
