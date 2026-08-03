@@ -6,12 +6,24 @@ Tu app ya está desplegada, pero necesitas configurar las variables de entorno p
 
 ## 📋 Paso 1: Cambiar a MySQL en Railway
 
-1. En Railway, click en tu base de datos **`vulcanizadora-db`**
-2. Ve a la pestaña **"Settings"**
-3. Click en **"Change Database Type"** o **"Delete"** y crea una nueva
-4. Selecciona **"MySQL"** en lugar de PostgreSQL
-5. Railway creará una nueva base de datos MySQL
-6. Ve a la pestaña **"Variables"** y verás variables **MYSQL_***
+**Opción A - Crear nueva base de datos MySQL (Recomendado):**
+
+1. En Railway, en el menú izquierdo, click en **"New"** (botón +)
+2. Selecciona **"Database"**
+3. Elige **"MySQL"**
+4. Railway creará automáticamente una base de datos MySQL
+5. Nómbrala como `vulcanizadora-db-mysql` (o el nombre que prefieras)
+6. Ve a la pestaña **"Variables"** de la nueva base de datos MySQL
+7. Verás variables **MYSQL_*** (MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE)
+
+**Opción B - Eliminar PostgreSQL y crear MySQL:**
+
+1. En la base de datos actual `vulcanizadora-db`, ve a **"Settings"**
+2. Scroll hasta abajo y busca **"Delete"** o **"Danger Zone"**
+3. Elimina la base de datos PostgreSQL
+4. Crea una nueva base de datos MySQL como en la Opción A
+
+**Nota**: La Opción A es más segura porque mantienes la base de datos PostgreSQL por si acaso.
 
 ---
 
