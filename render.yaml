@@ -49,5 +49,6 @@ services:
 databases:
   - name: vulcanizadora-db
     plan: free
+    type: mysql
     databaseName: vulcanizadora
     user: vulcanizadora_user
