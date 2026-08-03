@@ -61,13 +61,15 @@ APP_URL=https://vulcanizadora-don-chuy-production.up.railway.app
 
 1. En la misma pestaña **"Variables"**, click en **"+ New Variable"** o **"Add Variable Reference"**
 2. Selecciona tu base de datos MySQL (`Vulkanikapp_db`)
-3. Railway agregará automáticamente estas variables:
+3. Railway agregará automáticamente estas variables con la sintaxis correcta:
    - `DB_CONNECTION=mysql`
    - `DB_HOST=${{MySQL.MYSQL_HOST}}`
    - `DB_PORT=${{MySQL.MYSQL_PORT}}`
    - `DB_DATABASE=${{MySQL.MYSQL_DATABASE}}`
    - `DB_USERNAME=${{MySQL.MYSQL_USER}}`
    - `DB_PASSWORD=${{MySQL.MYSQL_PASSWORD}}`
+
+**⚠️ IMPORTANTE**: La sintaxis debe ser exactamente `${{MySQL.MYSQL_HOST}}` (sin comillas invertidas, sin nombre de base de datos en el medio)
 
 **Método 2 - Agregar manualmente:**
 
