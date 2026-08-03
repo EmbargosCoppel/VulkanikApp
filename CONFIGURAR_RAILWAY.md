@@ -4,14 +4,31 @@ Tu app ya está desplegada, pero necesitas configurar las variables de entorno p
 
 ---
 
-## 📋 Paso 1: Conectar MySQL al servicio web
+## 📋 Paso 1: Solucionar error de MySQL y conectarlo al servicio web
 
-¡Perfecto! Veo que ya creaste la base de datos MySQL (`Vulkanikapp_db`). Ahora debes conectarla al servicio web:
+### ⚠️ IMPORTANTE - Si ves este error en los logs:
+```
+[ERROR] [MY-010457] [Server] --initialize specified but the data directory has files in it. Aborting.
+```
+
+**Solución**: Necesitas eliminar el volumen de MySQL y crear uno nuevo:
+
+1. En Railway, click en tu base de datos MySQL (`Vulkanikapp_db`)
+2. Ve a la pestaña **"Settings"**
+3. Scroll hasta abajo hasta **"Danger Zone"** o **"Delete"**
+4. Click en **"Delete"** para eliminar la base de datos
+5. Confirma la eliminación
+6. Ahora, en el menú izquierdo, click en **"New"** (botón +)
+7. Selecciona **"Database"** → **"MySQL"**
+8. Nómbrala como `vulcanizadora-db` (o el nombre que prefieras)
+9. Espera 1-2 minutos a que se cree correctamente
+
+### Conectar MySQL al servicio web:
 
 1. En Railway, click en tu servicio web **`vulcanizadora-don-chuy`**
 2. Ve a la pestaña **"Variables"**
 3. En la sección **"Shared Variable"** o **"Add Variable Reference"**, busca la opción para agregar variables de la base de datos
-4. Selecciona tu base de datos MySQL (`Vulkanikapp_db`)
+4. Selecciona tu base de datos MySQL
 5. Railway agregará automáticamente las variables `${{MySQL.*}}` a tu servicio web
 
 **Nota**: También puedes agregar las variables manualmente como se indica en el Paso 2.
