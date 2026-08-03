@@ -8,12 +8,8 @@ Tu app ya está desplegada, pero necesitas configurar las variables de entorno p
 
 1. En Railway, click en tu base de datos **`vulcanizadora-db`**
 2. Ve a la pestaña **"Variables"**
-3. Copia estos valores:
-   - `MYSQL_HOST`
-   - `MYSQL_PORT`
-   - `MYSQL_USER`
-   - `MYSQL_PASSWORD`
-   - `MYSQL_DATABASE`
+3. Verás variables de **PostgreSQL** (POSTGRES_*)
+4. Railway conectará automáticamente la base de datos usando variables de referencia
 
 ---
 
@@ -38,15 +34,15 @@ APP_URL=https://vulcanizadora-don-chuy-production.up.railway.app
 ### Variables de base de datos:
 
 ```
-DB_CONNECTION=mysql
-DB_HOST=${{MySQL.MYSQL_HOST}}
-DB_PORT=${{MySQL.MYSQL_PORT}}
-DB_DATABASE=${{MySQL.MYSQL_DATABASE}}
-DB_USERNAME=${{MySQL.MYSQL_USER}}
-DB_PASSWORD=${{MySQL.MYSQL_PASSWORD}}
+DB_CONNECTION=pgsql
+DB_HOST=${{Postgres.HOST}}
+DB_PORT=${{Postgres.PORT}}
+DB_DATABASE=${{Postgres.DATABASE}}
+DB_USERNAME=${{Postgres.USERNAME}}
+DB_PASSWORD=${{Postgres.PASSWORD}}
 ```
 
-**Importante**: Usa la sintaxis `${{MySQL.VARIABLE}}` para conectar automáticamente con la base de datos.
+**Importante**: Usa la sintaxis `${{Postgres.VARIABLE}}` para conectar automáticamente con la base de datos PostgreSQL.
 
 ### Variables adicionales:
 
@@ -101,9 +97,9 @@ PAYMENT_CURRENCY=mxn
 ### No se conecta a la base de datos
 
 **Solución**:
-1. Verifica que las variables `${{MySQL.MYSQL_*}}` estén correctas
+1. Verifica que las variables `${{Postgres.*}}` estén correctas
 2. Asegúrate de que la base de datos esté en el mismo proyecto
-3. Verifica que el servicio de MySQL esté **Online**
+3. Verifica que el servicio de PostgreSQL esté **Online**
 
 ### La página carga en blanco
 
