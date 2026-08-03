@@ -4,26 +4,17 @@ Tu app ya está desplegada, pero necesitas configurar las variables de entorno p
 
 ---
 
-## 📋 Paso 1: Cambiar a MySQL en Railway
+## 📋 Paso 1: Conectar MySQL al servicio web
 
-**Opción A - Crear nueva base de datos MySQL (Recomendado):**
+¡Perfecto! Veo que ya creaste la base de datos MySQL (`Vulkanikapp_db`). Ahora debes conectarla al servicio web:
 
-1. En Railway, en el menú izquierdo, click en **"New"** (botón +)
-2. Selecciona **"Database"**
-3. Elige **"MySQL"**
-4. Railway creará automáticamente una base de datos MySQL
-5. Nómbrala como `vulcanizadora-db-mysql` (o el nombre que prefieras)
-6. Ve a la pestaña **"Variables"** de la nueva base de datos MySQL
-7. Verás variables **MYSQL_*** (MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE)
+1. En Railway, click en tu servicio web **`vulcanizadora-don-chuy`**
+2. Ve a la pestaña **"Variables"**
+3. En la sección **"Shared Variable"** o **"Add Variable Reference"**, busca la opción para agregar variables de la base de datos
+4. Selecciona tu base de datos MySQL (`Vulkanikapp_db`)
+5. Railway agregará automáticamente las variables `${{MySQL.*}}` a tu servicio web
 
-**Opción B - Eliminar PostgreSQL y crear MySQL:**
-
-1. En la base de datos actual `vulcanizadora-db`, ve a **"Settings"**
-2. Scroll hasta abajo y busca **"Delete"** o **"Danger Zone"**
-3. Elimina la base de datos PostgreSQL
-4. Crea una nueva base de datos MySQL como en la Opción A
-
-**Nota**: La Opción A es más segura porque mantienes la base de datos PostgreSQL por si acaso.
+**Nota**: También puedes agregar las variables manualmente como se indica en el Paso 2.
 
 ---
 
