@@ -129,10 +129,48 @@ PAYMENT_CURRENCY=mxn
 
 ### Error 500 - Internal Server Error
 
-**Solución**:
-1. Ve a la pestaña **"Console"** en Railway
-2. Revisa los logs de error
-3. Verifica que todas las variables de entorno estén configuradas
+**Solución paso a paso**:
+
+1. **Verificar logs de error**:
+   - Ve a la pestaña **"Console"** en Railway
+   - Busca líneas en rojo o que digan "ERROR"
+   - Copia el mensaje de error exacto
+
+2. **Verificar variables de entorno**:
+   - Asegúrate de que TODAS estas variables estén configuradas:
+     ```
+     APP_NAME="Vulcanizadora Don Chuy"
+     APP_ENV=production
+     APP_DEBUG=false
+     APP_KEY=base64:gOJzIWM+tlvv3blriTbuBb4KYPguNIoSUX0tOrIHO9g=
+     APP_URL=https://vulcanizadora-don-chuy-production.up.railway.app
+     
+     DB_CONNECTION=mysql
+     DB_HOST=${{MySQL.MYSQL_HOST}}
+     DB_PORT=${{MySQL.MYSQL_PORT}}
+     DB_DATABASE=${{MySQL.MYSQL_DATABASE}}
+     DB_USERNAME=${{MySQL.MYSQL_USER}}
+     DB_PASSWORD=${{MySQL.MYSQL_PASSWORD}}
+     
+     SESSION_DRIVER=database
+     CACHE_STORE=database
+     QUEUE_CONNECTION=sync
+     IVA_RATE=0.16
+     PAGINATION_PER_PAGE=15
+     PAYMENT_CURRENCY=mxn
+     ```
+
+3. **Verificar que la base de datos esté Online**:
+   - En Railway, verifica que el servicio de MySQL esté en verde "Online"
+   - Si está en rojo, espera 1-2 minutos o reinicia el servicio
+
+4. **Verificar migraciones**:
+   - En la pestaña **"Console"**, busca si hubo errores en las migraciones
+   - Las migraciones se ejecutan automáticamente en el deploy
+
+5. **Solución más común**:
+   - Si el error es de base de datos, verifica que las variables `${{MySQL.*}}` estén correctas
+   - Si el error es de APP_KEY, regenera la clave con: `php artisan key:generate`
 
 ### No se conecta a la base de datos
 
