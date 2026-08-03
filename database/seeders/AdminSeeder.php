@@ -16,7 +16,7 @@ class AdminSeeder extends Seeder
             ['email' => 'admin@taller.com'],
             [
                 'name' => 'Admin User',
-                'password' => bcrypt('password'),
+                'password' => bcrypt(env('ADMIN_PASSWORD', 'change-me-immediately')),
                 'role' => 'admin',
                 'email_verified_at' => now(),
             ]
@@ -26,7 +26,7 @@ class AdminSeeder extends Seeder
             ['email' => 'mecanico@taller.com'],
             [
                 'name' => 'Mecánico Juan',
-                'password' => bcrypt('password'),
+                'password' => bcrypt(env('MECANICO_PASSWORD', 'change-me-immediately')),
                 'role' => 'mecanico',
                 'email_verified_at' => now(),
             ]

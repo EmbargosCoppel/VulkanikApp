@@ -100,8 +100,8 @@ Write-Host "  ¡Configuración completada!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Credenciales de prueba:" -ForegroundColor Cyan
-Write-Host "  Admin:    admin@taller.com / password" -ForegroundColor White
-Write-Host "  Mecánico: mecanico@taller.com / password" -ForegroundColor White
+Write-Host "  Admin:    admin@taller.com / (ver ADMIN_PASSWORD en .env)" -ForegroundColor White
+Write-Host "  Mecánico: mecanico@taller.com / (ver MECANICO_PASSWORD en .env)" -ForegroundColor White
 Write-Host ""
 
 # Iniciar servidores

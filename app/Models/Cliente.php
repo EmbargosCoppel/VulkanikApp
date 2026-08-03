@@ -13,12 +13,14 @@ class Cliente extends Model
 
     protected $fillable = [
         'nombre',
+        'vehiculo_id',
         'telefono',
         'email',
         'direccion',
         'rfc',
         'es_empresa',
         'nombre_empresa',
+        'cliente_id',
     ];
 
     public function vehiculos(): HasMany

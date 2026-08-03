@@ -28,7 +28,7 @@ class StripePaymentAdapter implements PaymentAdapterInterface
             //     'confirm' => true,
             // ]);
 
-            // Simulación para desarrollo
+            // Simulación para desarrollo(Solo simula no hace nada aun,solo es visial por ahora)
             Log::info('Procesando pago con Stripe', [
                 'monto' => $monto,
                 'datos_pago' => $datosPago,

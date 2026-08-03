@@ -11,6 +11,8 @@ services:
         ports:
             - '${APP_PORT:-80}:8000'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        # Exponer en todas las interfaces para acceso desde otros dispositivos
+        # Por defecto escucha en 0.0.0.0:8000 dentro del contenedor
         restart: unless-stopped
         environment:
             WWWUSER: '${WWWUSER:-1000}'
