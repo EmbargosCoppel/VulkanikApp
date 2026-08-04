@@ -1,3 +1,505 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================
+   PALETA DE COLORES INSPIRADA EN HOSTINGER
+   ============================================ */
+:root {
+    /* Colores principales */
+    --color-primary: #1a73e8;           /* Azul principal de Hostinger */
+    --color-primary-dark: #1557b0;      /* Azul oscuro para hover */
+    --color-primary-light: #e8f0fe;     /* Azul claro para fondos */
+    
+    /* Colores secundarios */
+    --color-secondary: #5f6368;         /* Gris oscuro para texto */
+    --color-secondary-light: #9aa0a6;   /* Gris medio */
+    --color-secondary-lighter: #dadce0; /* Gris claro para bordes */
+    
+    /* Colores de fondo */
+    --color-bg-primary: #ffffff;        /* Blanco puro */
+    --color-bg-secondary: #f8f9fa;      /* Gris muy claro */
+    --color-bg-tertiary: #f1f3f4;       /* Gris claro */
+    
+    /* Colores de éxito/error */
+    --color-success: #34a853;           /* Verde */
+    --color-warning: #fbbc04;           /* Amarillo */
+    --color-error: #ea4335;             /* Rojo */
+    --color-info: #1a73e8;              /* Azul info */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(60, 64, 67, 0.1), 0 2px 4px -1px rgba(60, 64, 67, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(60, 64, 67, 0.1), 0 4px 6px -2px rgba(60, 64, 67, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(60, 64, 67, 0.1), 0 10px 10px -5px rgba(60, 64, 67, 0.04);
+    
+    /* Transiciones */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   ESTILOS BASE
+   ============================================ */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-secondary);
+    line-height: 1.6;
+}
+
+/* ============================================
+   COMPONENTES PERSONALIZADOS
+   ============================================ */
+
+/* Botones */
+.btn {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 inline-flex items-center justify-center gap-2;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-secondary {
+    background-color: white;
+    color: var(--color-primary);
+    border: 1px solid var(--color-secondary-lighter);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+.btn-danger {
+    background-color: var(--color-error);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c5221f;
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #2d8e47;
+}
+
+/* Cards */
+.card {
+    background-color: var(--color-bg-primary);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    transition: all var(--transition-normal);
+    border: 1px solid var(--color-secondary-lighter);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    @apply flex items-center justify-between mb-4;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-secondary-lighter);
+}
+
+.card-title {
+    @apply text-xl font-semibold;
+    color: var(--color-secondary);
+}
+
+.card-body {
+    color: var(--color-secondary);
+}
+
+/* Inputs */
+.input {
+    @apply w-full px-4 py-3 rounded-lg border transition-all duration-300;
+    border-color: var(--color-secondary-lighter);
+    background-color: var(--color-bg-primary);
+    color: var(--color-secondary);
+}
+
+.input:focus {
+    @apply outline-none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.input-group {
+    @apply mb-4;
+}
+
+.input-label {
+    @apply block text-sm font-medium mb-2;
+    color: var(--color-secondary);
+}
+
+/* Tables */
+.table-container {
+    @apply overflow-x-auto rounded-lg;
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-bg-primary);
+}
+
+.table {
+    @apply w-full;
+}
+
+.table thead {
+    background-color: var(--color-bg-tertiary);
+}
+
+.table th {
+    @apply px-6 py-4 text-left text-sm font-semibold;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.table td {
+    @apply px-6 py-4;
+    border-top: 1px solid var(--color-secondary-lighter);
+    color: var(--color-secondary);
+}
+
+.table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+/* Alerts */
+.alert {
+    @apply px-6 py-4 rounded-lg mb-4 flex items-start gap-3;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background-color: #e6f4ea;
+    border-color: var(--color-success);
+    color: #1e7e34;
+}
+
+.alert-error {
+    background-color: #fce8e6;
+    border-color: var(--color-error);
+    color: #c5221f;
+}
+
+.alert-warning {
+    background-color: #fef7e0;
+    border-color: var(--color-warning);
+    color: #b06000;
+}
+
+.alert-info {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+}
+
+/* Badges */
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.badge-success {
+    background-color: #e6f4ea;
+    color: var(--color-success);
+}
+
+.badge-warning {
+    background-color: #fef7e0;
+    color: #b06000;
+}
+
+.badge-error {
+    background-color: #fce8e6;
+    color: var(--color-error);
+}
+
+/* Navigation */
+.nav-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300;
+    color: var(--color-secondary);
+}
+
+.nav-link:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-primary);
+}
+
+.nav-link.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--color-bg-primary);
+    border-right: 1px solid var(--color-secondary-lighter);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Header */
+.header {
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-secondary-lighter);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Stats Cards */
+.stat-card {
+    @apply p-6 rounded-xl;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-secondary-lighter);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center text-2xl;
+}
+
+.stat-value {
+    @apply text-3xl font-bold mt-2;
+    color: var(--color-secondary);
+}
+
+.stat-label {
+    @apply text-sm mt-1;
+    color: var(--color-secondary-light);
+}
+
+/* Modals */
+.modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    @apply bg-white rounded-xl shadow-2xl max-w-md w-full mx-4;
+    animation: modalSlideIn var(--transition-normal);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dropdowns */
+.dropdown {
+    @apply relative;
+}
+
+.dropdown-menu {
+    @apply absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50;
+    animation: dropdownFadeIn var(--transition-fast);
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    @apply block px-4 py-2 text-sm transition-colors duration-200;
+    color: var(--color-secondary);
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-primary);
+}
+
+/* Forms */
+.form-group {
+    @apply mb-6;
+}
+
+.form-label {
+    @apply block text-sm font-medium mb-2;
+    color: var(--color-secondary);
+}
+
+.form-input {
+    @apply w-full px-4 py-3 rounded-lg border transition-all duration-300;
+    border-color: var(--color-secondary-lighter);
+    background-color: var(--color-bg-primary);
+    color: var(--color-secondary);
+}
+
+.form-input:focus {
+    @apply outline-none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.form-error {
+    @apply text-red-600 text-sm mt-1;
+}
+
+/* Pagination */
+.pagination {
+    @apply flex items-center justify-between mt-6;
+}
+
+.pagination-nav {
+    @apply flex gap-2;
+}
+
+.pagination-link {
+    @apply px-4 py-2 rounded-lg border transition-all duration-300;
+    border-color: var(--color-secondary-lighter);
+    color: var(--color-secondary);
+}
+
+.pagination-link:hover {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.pagination-link.active {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+/* Loading Spinner */
+.spinner {
+    @apply inline-block w-8 h-8 border-4 border-gray-200 border-t-primary rounded-full;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Skeleton Loading */
+.skeleton {
+    @apply bg-gray-200 rounded animate-pulse;
+}
+
+/* Tooltips */
+.tooltip {
+    @apply relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    @apply absolute bottom-full left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 pointer-events-none transition-opacity duration-300 whitespace-nowrap;
+    margin-bottom: 8px;
+}
+
+.tooltip:hover::after {
+    @apply opacity-100;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card {
+        @apply p-4;
+    }
+    
+    .table th,
+    .table td {
+        @apply px-4 py-3 text-sm;
+    }
+    
+    .btn {
+        @apply px-4 py-2 text-sm;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn var(--transition-normal);
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-secondary-lighter);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secondary-light);
+}
+
+/* Selection */
+::selection {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
