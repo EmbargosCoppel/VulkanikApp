@@ -417,7 +417,8 @@ body {
 
 /* Loading Spinner */
 .spinner {
-    @apply inline-block w-8 h-8 border-4 border-gray-200 border-t-primary rounded-full;
+    @apply inline-block w-8 h-8 border-4 border-gray-200 rounded-full;
+    border-top-color: var(--color-primary);
     animation: spin 1s linear infinite;
 }
 
