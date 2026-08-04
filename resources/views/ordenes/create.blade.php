@@ -1,67 +1,113 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            Nueva Orden de Trabajo
-        </h2>
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-bold" style="color: var(--color-secondary);">
+                    Nueva Orden de Trabajo
+                </h2>
+                <p class="mt-1 text-sm" style="color: var(--color-secondary-light);">
+                    Completa el formulario para crear una nueva orden
+                </p>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="bg-white rounded-lg shadow-md p-6">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">
-            <i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Nueva Orden de Trabajo
-        </h1>
-        <a href="{{ route('ordenes.index') }}" class="text-blue-600 hover:text-blue-800">
-            <i class="fas fa-arrow-left mr-1"></i>Volver
-        </a>
+    <div class="max-w-4xl">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-clipboard-list mr-2" style="color: var(--color-primary);"></i>
+                    Información de la Orden
+                </h3>
+                <a href="{{ route('ordenes.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver
+                </a>
+            </div>
+
+            <form action="{{ route('ordenes.store') }}" method="POST">
+                @csrf
+                <div class="card-body space-y-6">
+                    <!-- Vehículo -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-car mr-2" style="color: var(--color-primary);"></i>
+                            Vehículo *
+                        </label>
+                        <select name="vehiculo_id" required class="form-input">
+                            <option value="">Seleccionar vehículo</option>
+                            @foreach($vehiculos as $vehiculo)
+                            <option value="{{ $vehiculo->id }}" {{ old('vehiculo_id') == $vehiculo->id ? 'selected' : '' }}>
+                                {{ $vehiculo->marca }} {{ $vehiculo->modelo }} ({{ $vehiculo->placa }}) - {{ $vehiculo->cliente->nombre }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('vehiculo_id') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- Mecánico -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user-cog mr-2" style="color: var(--color-primary);"></i>
+                            Mecánico *
+                        </label>
+                        <select name="mecanico_id" required class="form-input">
+                            <option value="">Seleccionar mecánico</option>
+                            @foreach($mecanicos as $mecanico)
+                            <option value="{{ $mecanico->id }}" {{ old('mecanico_id') == $mecanico->id ? 'selected' : '' }}>
+                                {{ $mecanico->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('mecanico_id') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tasks mr-2" style="color: var(--color-primary);"></i>
+                            Estado Inicial *
+                        </label>
+                        <select name="estado" required class="form-input">
+                            <option value="">Seleccionar estado</option>
+                            <option value="diagnóstico" {{ old('estado') == 'diagnóstico' ? 'selected' : '' }}>
+                                🔍 Diagnóstico
+                            </option>
+                            <option value="esperando_piezas" {{ old('estado') == 'esperando_piezas' ? 'selected' : '' }}>
+                                ⏳ Esperando Piezas
+                            </option>
+                            <option value="reparación" {{ old('estado') == 'reparación' ? 'selected' : '' }}>
+                                🔧 En Reparación
+                            </option>
+                            <option value="completada" {{ old('estado') == 'completada' ? 'selected' : '' }}>
+                                ✅ Completada
+                            </option>
+                        </select>
+                        @error('estado') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- Diagnóstico -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-stethoscope mr-2" style="color: var(--color-primary);"></i>
+                            Diagnóstico
+                        </label>
+                        <textarea name="diagnostico" rows="4" class="form-input" placeholder="Describe el problema del vehículo...">{{ old('diagnostico') }}</textarea>
+                        @error('diagnostico') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <a href="{{ route('ordenes.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Crear Orden
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <form action="{{ route('ordenes.store') }}" method="POST">
-        @csrf
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Vehículo *</label>
-                <select name="vehiculo_id" required
-                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Seleccionar vehículo</option>
-                    @foreach($vehiculos as $vehiculo)
-                    <option value="{{ $vehiculo->id }}" {{ old('vehiculo_id') == $vehiculo->id ? 'selected' : '' }}>
-                        {{ $vehiculo->marca }} {{ $vehiculo->modelo }} ({{ $vehiculo->placa }}) - {{ $vehiculo->cliente->nombre }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('vehiculo_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Mecánico *</label>
-                <select name="mecanico_id" required
-                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Seleccionar mecánico</option>
-                    @foreach($mecanicos as $mecanico)
-                    <option value="{{ $mecanico->id }}" {{ old('mecanico_id') == $mecanico->id ? 'selected' : '' }}>
-                        {{ $mecanico->name }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('mecanico_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Diagnóstico</label>
-                <textarea name="diagnostico" rows="4"
-                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('diagnostico') }}</textarea>
-                @error('diagnostico') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-        </div>
-
-        <div class="mt-6 flex justify-end space-x-3">
-            <a href="{{ route('ordenes.index') }}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
-                Cancelar
-            </a>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                <i class="fas fa-save mr-2"></i>Crear Orden
-            </button>
-        </div>
-    </form>
-</div>
 </x-app-layout>
