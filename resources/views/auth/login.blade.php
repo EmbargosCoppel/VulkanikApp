@@ -1,51 +1,64 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Bienvenido al sistema de taller mecánico. Inicia sesión para continuar.') }}
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-center" style="color: var(--color-secondary);">
+            Iniciar Sesión
+        </h2>
+        <p class="text-sm text-center mt-2" style="color: var(--color-secondary-light);">
+            Ingresa tus credenciales para acceder
+        </p>
     </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" class="space-y-6">
         @csrf
 
         <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="form-group">
+            <label class="form-label" for="email">
+                <i class="fas fa-envelope mr-2" style="color: var(--color-primary);"></i>
+                Correo Electrónico
+            </label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
+                   class="form-input" placeholder="admin@taller.com">
+            <x-input-error :messages="$errors->get('email')" class="form-error" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Contraseña')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="form-group">
+            <label class="form-label" for="password">
+                <i class="fas fa-lock mr-2" style="color: var(--color-primary);"></i>
+                Contraseña
+            </label>
+            <input id="password" type="password" name="password" required autocomplete="current-password" 
+                   class="form-input" placeholder="••••••••">
+            <x-input-error :messages="$errors->get('password')" class="form-error" />
         </div>
 
         <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Recordarme') }}</span>
+        <div class="form-group">
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" name="remember" class="rounded border-gray-300" style="accent-color: var(--color-primary);">
+                <span class="ms-2 text-sm" style="color: var(--color-secondary);">
+                    Recordarme
+                </span>
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex flex-col gap-3">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('¿Olvidaste tu contraseña?') }}
+                <a href="{{ route('password.request') }}" 
+                   class="text-sm text-center" 
+                   style="color: var(--color-primary);">
+                    ¿Olvidaste tu contraseña?
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Iniciar sesión') }}
-            </x-primary-button>
+            <button type="submit" class="btn btn-primary w-full">
+                <i class="fas fa-sign-in-alt"></i>
+                Iniciar Sesión
+            </button>
         </div>
     </form>
 </x-guest-layout>

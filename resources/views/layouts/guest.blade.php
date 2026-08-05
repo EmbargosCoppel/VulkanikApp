@@ -17,16 +17,33 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="font-sans antialiased" style="background-color: var(--color-bg-secondary);">
+        <div class="min-h-screen flex items-center justify-center">
+            <div class="w-full max-w-md">
+                <!-- Logo -->
+                <div class="text-center mb-8">
+                    <a href="/" class="inline-flex items-center gap-3">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center" style="background-color: var(--color-primary);">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <span class="text-3xl font-bold" style="color: var(--color-secondary);">Vulcanizadora</span>
+                    </a>
+                    <p class="mt-2 text-sm" style="color: var(--color-secondary-light);">Sistema de Gestión de Taller</p>
+                </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+                <!-- Login Card -->
+                <div class="card">
+                    {{ $slot }}
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center mt-6">
+                    <p class="text-sm" style="color: var(--color-secondary-light);">
+                        © 2026 Vulcanizadora Don Chuy. Todos los derechos reservados.
+                    </p>
+                </div>
             </div>
         </div>
     </body>
