@@ -20,7 +20,7 @@
     <body class="font-sans antialiased" style="background-color: var(--color-bg-secondary);">
         <div style="display: flex; min-height: 100vh;">
             <!-- Sidebar -->
-            <aside class="sidebar" style="width: 256px; flex-shrink: 0; background-color: var(--color-bg-primary); border-right: 1px solid var(--color-secondary-lighter); box-shadow: var(--shadow-sm);">
+            <aside class="sidebar hidden md:block" style="width: 256px; flex-shrink: 0; background-color: var(--color-bg-primary); border-right: 1px solid var(--color-secondary-lighter); box-shadow: var(--shadow-sm);">
                 <div style="display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0;">
                     <!-- Logo -->
                     <div style="display: flex; align-items: center; justify-content: center; height: 64px; padding: 0 16px; margin-bottom: 16px;">
