@@ -20,8 +20,8 @@ se usen desplegables<!DOCTYPE html>
     <body class="font-sans antialiased" style="background-color: var(--color-bg-secondary);">
         <div class="flex min-h-screen">
             <!-- Sidebar -->
-            <aside class="sidebar hidden md:flex md:w-64 md:flex-col md:sticky md:top-0">
-                <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+            <aside class="sidebar hidden md:block md:w-64 md:flex-shrink-0">
+                <div class="flex flex-col h-screen sticky top-0">
                     <!-- Logo -->
                     <div class="flex items-center justify-center h-16 px-4 mb-4">
                         <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
@@ -35,7 +35,7 @@ se usen desplegables<!DOCTYPE html>
                     </div>
 
                     <!-- Navigation -->
-                    <nav class="mt-5 flex-1 px-2 space-y-1">
+                    <nav class="flex-1 px-2 space-y-1 overflow-y-auto">
                         <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="fas fa-home"></i>
                             <span>Dashboard</span>
@@ -63,7 +63,7 @@ se usen desplegables<!DOCTYPE html>
             </aside>
 
             <!-- Main Content -->
-            <div class="md:pl-64 flex flex-col flex-1">
+            <div class="flex flex-col flex-1 min-w-0">
                 <!-- Top Navigation (Mobile) -->
                 <div class="md:hidden">
                     @include('layouts.navigation')
