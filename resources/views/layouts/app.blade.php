@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+se usen desplegables<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -20,7 +20,7 @@
     <body class="font-sans antialiased" style="background-color: var(--color-bg-secondary);">
         <div class="flex min-h-screen">
             <!-- Sidebar -->
-            <aside class="sidebar hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+            <aside class="sidebar hidden md:flex md:w-64 md:flex-col md:sticky md:top-0">
                 <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                     <!-- Logo -->
                     <div class="flex items-center justify-center h-16 px-4 mb-4">
