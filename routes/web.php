@@ -8,6 +8,18 @@ use App\Http\Controllers\OrdenTrabajoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 
+// Ruta de diagnóstico (solo para testing)
+Route::get('/debug', function () {
+    return response()->json([
+        'status' => 'ok',
+        'app_name' => config('app.name'),
+        'app_env' => config('app.env'),
+        'database_connection' => config('database.default'),
+        'database_host' => config('database.connections.mysql.host'),
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+});
+
 Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
