@@ -51,6 +51,7 @@
                             <i class="fas fa-user-cog mr-2" style="color: var(--color-primary);"></i>
                             Mecánico *
                         </label>
+                        @if(auth()->user()->role === 'admin')
                         <select name="mecanico_id" required class="form-input">
                             <option value="">Seleccionar mecánico</option>
                             @foreach($mecanicos as $mecanico)
@@ -59,6 +60,11 @@
                             </option>
                             @endforeach
                         </select>
+                        @else
+                        <input type="hidden" name="mecanico_id" value="{{ auth()->id() }}">
+                        <input type="text" class="form-input" value="{{ auth()->user()->name }}" disabled>
+                        <p class="text-xs mt-1" style="color: var(--color-secondary-light);">Como mecánico, serás asignado automáticamente a esta orden.</p>
+                        @endif
                         @error('mecanico_id') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
 

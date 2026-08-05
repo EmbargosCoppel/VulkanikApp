@@ -42,6 +42,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Mecánico</label>
+                @if(auth()->user()->role === 'admin')
                 <select name="mecanico_id"
                     class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Seleccionar mecánico</option>
@@ -51,6 +52,11 @@
                     </option>
                     @endforeach
                 </select>
+                @else
+                <input type="hidden" name="mecanico_id" value="{{ auth()->id() }}">
+                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100" value="{{ auth()->user()->name }}" disabled>
+                <p class="text-xs text-gray-500 mt-1">No puedes cambiar el mecánico asignado.</p>
+                @endif
                 @error('mecanico_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
