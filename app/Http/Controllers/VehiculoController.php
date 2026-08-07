@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VehiculoRequest;
 use App\Models\Vehiculo;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
@@ -31,20 +32,9 @@ class VehiculoController extends Controller
         return view('vehiculos.create', compact('clientes'));
     }
 
-    public function store(Request $request)
+    public function store(VehiculoRequest $request)
     {
-        $validated = $request->validate([
-            'cliente_id' => 'required|exists:clientes,id',
-            'marca' => 'required|string|max:100',
-            'modelo' => 'required|string|max:100',
-            'anio' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'placa' => 'required|string|unique:vehiculos,placa',
-            'color' => 'nullable|string|max:50',
-            'vin' => 'nullable|string|max:17',
-            'notas' => 'nullable|string',
-        ]);
-
-        Vehiculo::create($validated);
+        Vehiculo::create($request->validated());
         return redirect()->route('vehiculos.index')->with('success', 'Vehículo registrado exitosamente');
     }
 
@@ -60,20 +50,9 @@ class VehiculoController extends Controller
         return view('vehiculos.edit', compact('vehiculo', 'clientes'));
     }
 
-    public function update(Request $request, Vehiculo $vehiculo)
+    public function update(VehiculoRequest $request, Vehiculo $vehiculo)
     {
-        $validated = $request->validate([
-            'cliente_id' => 'sometimes|exists:clientes,id',
-            'marca' => 'sometimes|string|max:100',
-            'modelo' => 'sometimes|string|max:100',
-            'anio' => 'sometimes|integer|min:1900|max:' . (date('Y') + 1),
-            'placa' => 'sometimes|string|unique:vehiculos,placa,' . $vehiculo->id,
-            'color' => 'nullable|string|max:50',
-            'vin' => 'nullable|string|max:17',
-            'notas' => 'nullable|string',
-        ]);
-
-        $vehiculo->update($validated);
+        $vehiculo->update($request->validated());
         return redirect()->route('vehiculos.index')->with('success', 'Vehículo actualizado exitosamente');
     }
 

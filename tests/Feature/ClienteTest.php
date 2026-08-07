@@ -151,8 +151,8 @@ class ClienteTest extends TestCase
 
     public function test_busqueda_filtra_por_email(): void
     {
-        Cliente::factory()->create(['email' => 'juan@example.com']);
-        Cliente::factory()->create(['email' => 'maria@example.com']);
+        Cliente::factory()->create(['nombre' => 'Juan Test', 'email' => 'juan@example.com']);
+        Cliente::factory()->create(['nombre' => 'Maria Test', 'email' => 'maria@example.com']);
 
         $response = $this->get(route('clientes.index', ['search' => 'juan']));
 

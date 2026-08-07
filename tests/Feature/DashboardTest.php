@@ -29,6 +29,32 @@ class DashboardTest extends TestCase
         $response->assertViewHas('stats');
         $response->assertViewHas('ordenes_recientes');
         $response->assertViewHas('refacciones_stock_bajo');
+        $response->assertViewHas('ordenes_cobrables');
+    }
+
+    public function test_admin_cobros_page_shows_payable_orders(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $vehiculo = Vehiculo::factory()->create();
+
+        OrdenTrabajo::factory()->create([
+            'vehiculo_id' => $vehiculo->id,
+            'estado' => 'diagnóstico',
+        ]);
+        OrdenTrabajo::factory()->create([
+            'vehiculo_id' => $vehiculo->id,
+            'estado' => 'esperando_piezas',
+        ]);
+        OrdenTrabajo::factory()->create([
+            'vehiculo_id' => $vehiculo->id,
+            'estado' => 'finalizado',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.cobros'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('ordenes_cobrables');
+        $this->assertCount(2, $response->viewData('ordenes_cobrables'));
     }
 
     public function test_dashboard_mecanico_se_muestra_correctamente(): void

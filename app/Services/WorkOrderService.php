@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\OrdenTrabajo;
 use App\Models\Refaccion;
+use App\Services\PaymentService;
 use App\Services\States\DiagnosticoState;
 use App\Services\States\EsperandoPiezasState;
 use App\Services\States\FinalizadoState;
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\DB;
 class WorkOrderService
 {
     private array $stateMap;
+    private PaymentService $paymentService;
 
-    public function __construct()
+    public function __construct(PaymentService $paymentService)
     {
+        $this->paymentService = $paymentService;
         $this->stateMap = [
             'diagnóstico' => new DiagnosticoState(),
             'esperando_piezas' => new EsperandoPiezasState(),
@@ -136,5 +139,10 @@ class WorkOrderService
         ];
 
         return $transiciones[$estadoActual] ?? [];
+    }
+
+    public function procesarPago(OrdenTrabajo $orden, array $datosPago): array
+    {
+        return $this->paymentService->procesarPago($orden, $datosPago);
     }
 }

@@ -30,6 +30,7 @@ class DashboardController extends Controller
             'vehiculos' => Vehiculo::count(),
             'ordenes' => OrdenTrabajo::count(),
             'refacciones' => Refaccion::where('activo', true)->count(),
+            'mecanicos' => User::where('role', 'mecanico')->count(),
             'ordenes_pendientes' => OrdenTrabajo::whereIn('estado', ['diagnóstico', 'esperando_piezas', 'reparación'])->count(),
             'ordenes_finalizadas' => OrdenTrabajo::where('estado', 'finalizado')->count(),
             'stock_bajo' => Refaccion::whereColumn('stock_actual', '<=', 'stock_minimo')
@@ -48,8 +49,24 @@ class DashboardController extends Controller
             ->orderBy('stock_actual', 'asc')
             ->limit(5)
             ->get();
+
+        $ordenes_cobrables = OrdenTrabajo::with(['vehiculo.cliente', 'mecanico'])
+            ->where('estado', '!=', 'finalizado')
+            ->orderBy('created_at', 'desc')
+            ->limit(8)
+            ->get();
         
-        return view('dashboard.admin', compact('stats', 'ordenes_recientes', 'refacciones_stock_bajo'));
+        return view('dashboard.admin', compact('stats', 'ordenes_recientes', 'refacciones_stock_bajo', 'ordenes_cobrables'));
+    }
+
+    public function cobros(): View
+    {
+        $ordenes_cobrables = OrdenTrabajo::with(['vehiculo.cliente', 'mecanico'])
+            ->where('estado', '!=', 'finalizado')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('dashboard.cobros', compact('ordenes_cobrables'));
     }
     
     private function mecanicoDashboard(): View

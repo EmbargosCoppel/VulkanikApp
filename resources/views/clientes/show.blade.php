@@ -75,9 +75,11 @@
                         <a href="{{ route('vehiculos.show', $vehiculo) }}" class="text-blue-600 hover:text-blue-900">
                             <i class="fas fa-eye"></i>
                         </a>
+                        @if(auth()->user()->role !== 'mecanico')
                         <a href="{{ route('ordenes.create') }}?vehiculo_id={{ $vehiculo->id }}" class="text-green-600 hover:text-green-900" title="Crear orden">
                             <i class="fas fa-clipboard-list"></i>
                         </a>
+                        @endif
                     </td>
                 </tr>
                 @empty

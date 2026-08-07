@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Refaccion;
+use App\Events\StockBajo;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,3 +45,20 @@ Schedule::call(function () {
         }
     }
 })->dailyAt('2:00');
+
+// Verificación de stock bajo - se ejecuta cada hora
+Schedule::call(function () {
+    $refaccionesBajoStock = Refaccion::whereColumn('stock_actual', '<=', 'stock_minimo')
+        ->where('activo', true)
+        ->whereNull('deleted_at')
+        ->get();
+
+    foreach ($refaccionesBajoStock as $refaccion) {
+        event(new StockBajo($refaccion, $refaccion->stock_actual, $refaccion->stock_minimo));
+    }
+
+    Log::info('Verificación de stock bajo completada', [
+        'refacciones_bajo_stock' => $refaccionesBajoStock->count(),
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+})->hourly();

@@ -47,9 +47,11 @@
 
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-800">Órdenes de Trabajo</h2>
+        @if(auth()->user()->role !== 'mecanico')
         <a href="{{ route('ordenes.create') }}?vehiculo_id={{ $vehiculo->id }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             <i class="fas fa-plus mr-2"></i>Crear Orden
         </a>
+        @endif
     </div>
 
     <div class="overflow-x-auto">

@@ -164,10 +164,12 @@
                             <i class="fas fa-car"></i>
                             Nuevo Vehículo
                         </a>
+                        @if(auth()->user()->role !== 'mecanico')
                         <a href="{{ route('ordenes.create') }}" class="btn btn-secondary w-full">
                             <i class="fas fa-clipboard-list"></i>
                             Nueva Orden
                         </a>
+                        @endif
                         @if(auth()->user()->role === 'admin')
                         <a href="{{ route('refacciones.create') }}" class="btn btn-secondary w-full">
                             <i class="fas fa-cogs"></i>

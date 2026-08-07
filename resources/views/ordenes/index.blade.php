@@ -10,13 +10,11 @@
         <h1 class="text-2xl font-bold text-gray-800">
             <i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Órdenes de Trabajo
         </h1>
-        <a href="{{ route('ordenes.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            <i class="fas fa-plus mr-2"></i>Nueva Orden
-        </a>
-    </div>
-
-    <!-- Búsqueda -->
-    <form method="GET" class="mb-4">
+            @if(auth()->user()->role !== 'mecanico')
+            <a href="{{ route('ordenes.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <i class="fas fa-plus mr-2"></i>Nueva Orden
+            </a>
+            @endif
         <div class="relative">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por placa, cliente o estado..."
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">

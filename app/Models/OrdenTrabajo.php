@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrdenTrabajo extends Model
 {
@@ -52,6 +53,11 @@ class OrdenTrabajo extends Model
         return $this->belongsToMany(Refaccion::class, 'orden_refaccion')
             ->withPivot('cantidad', 'precio_unitario', 'subtotal')
             ->withTimestamps();
+    }
+
+    public function pagos(): HasMany
+    {
+        return $this->hasMany(Pago::class);
     }
 
     public function puedeAgregarRefacciones(): bool

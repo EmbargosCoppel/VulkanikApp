@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             ClienteSeeder::class,
             RefaccionSeeder::class,
+            DemoDataSeeder::class,
         ]);
     }
 }

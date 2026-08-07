@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\OrdenTrabajo;
+use App\Models\Pago;
 use Illuminate\Support\Facades\DB;
 
 class PaymentService
@@ -24,6 +25,20 @@ class PaymentService
             $resultadoPago = $this->paymentAdapter->procesarPago($orden->total, $datosPago);
 
             if ($resultadoPago['exitoso']) {
+                // Guardar el pago en la base de datos
+                Pago::create([
+                    'orden_trabajo_id' => $orden->id,
+                    'transaction_id' => $resultadoPago['transaction_id'],
+                    'payment_method' => $datosPago['payment_method'] ?? 'card',
+                    'monto' => $orden->total,
+                    'estado' => 'completado',
+                    'moneda' => config('taller.payment.currency', 'mxn'),
+                    'metadata' => [
+                        'payment_intent_status' => $resultadoPago['status'] ?? null,
+                        'orden_id' => $orden->id,
+                    ],
+                ]);
+
                 $orden->estado = 'finalizado';
                 $orden->fecha_salida = now();
                 $orden->save();

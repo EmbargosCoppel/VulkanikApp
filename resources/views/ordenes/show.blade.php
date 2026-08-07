@@ -6,14 +6,36 @@
     </x-slot>
 
 <div class="bg-white rounded-lg shadow-md p-6">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">
-            <i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Orden de Trabajo #{{ $ordenTrabajo->id }}
-        </h1>
-        <a href="{{ route('ordenes.index') }}" class="text-blue-600 hover:text-blue-800">
-            <i class="fas fa-arrow-left mr-1"></i>Volver
-        </a>
+    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+                <i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Orden de Trabajo #{{ $ordenTrabajo->id }}
+            </h1>
+            <a href="{{ route('ordenes.index') }}" class="text-blue-600 hover:text-blue-800">
+                <i class="fas fa-arrow-left mr-1"></i>Volver
+            </a>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('ordenes.ticket', $ordenTrabajo) }}" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">
+                <i class="fas fa-receipt mr-1"></i>Ver Ticket
+            </a>
+            @if(auth()->user()->role === 'admin' && !$ordenTrabajo->estaFinalizada())
+            <a href="{{ route('ordenes.pagar', $ordenTrabajo) }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                <i class="fas fa-credit-card mr-1"></i>Procesar Pago
+            </a>
+            @endif
+            <a href="{{ route('ordenes.edit', $ordenTrabajo) }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <i class="fas fa-edit mr-1"></i>Editar
+            </a>
+        </div>
+        @if(auth()->user()->role === 'admin' && !$ordenTrabajo->estaFinalizada())
+        <div class="mt-4 p-4 border border-green-200 rounded-lg bg-green-50 text-green-900">
+            <p class="font-semibold">Acción disponible solo para administradores:</p>
+            <p class="text-sm">Puedes cobrar esta orden con Stripe en cualquier etapa del proceso antes de finalizarla.</p>
+        </div>
+        @endif
     </div>
+
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-gray-50 p-4 rounded-lg">

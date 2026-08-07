@@ -111,6 +111,30 @@ class OrdenTrabajoTest extends TestCase
         ]);
     }
 
+    public function test_mecanico_no_puede_cambiar_vehiculo_al_actualizar_orden(): void
+    {
+        $mecanico = User::factory()->create(['role' => 'mecanico']);
+        $orden = OrdenTrabajo::factory()->create(['estado' => 'diagnóstico', 'mecanico_id' => $mecanico->id]);
+
+        $this->actingAs($mecanico);
+
+        $response = $this->put(route('ordenes.update', $orden), [
+            'estado' => 'reparación',
+            'vehiculo_id' => Vehiculo::factory()->create()->id,
+            'mecanico_id' => User::factory()->create(['role' => 'mecanico'])->id,
+        ]);
+
+        $response->assertRedirect(route('ordenes.index'));
+        $orden->refresh();
+
+        $this->assertEquals('reparación', $orden->estado);
+        $this->assertDatabaseHas('ordenes_trabajo', [
+            'id' => $orden->id,
+            'vehiculo_id' => $orden->vehiculo_id,
+            'mecanico_id' => $mecanico->id,
+        ]);
+    }
+
     public function test_validacion_transicion_estado_valida(): void
     {
         // No se puede transicionar de 'finalizado' a otro estado

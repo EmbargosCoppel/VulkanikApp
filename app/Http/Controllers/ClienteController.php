@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClienteRequest;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
 
@@ -29,19 +30,9 @@ class ClienteController extends Controller
         return view('clientes.create');
     }
 
-    public function store(Request $request)
+    public function store(ClienteRequest $request)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'telefono' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'direccion' => 'nullable|string',
-            'rfc' => 'nullable|string|max:13',
-            'es_empresa' => 'sometimes|boolean',
-            'nombre_empresa' => 'nullable|string|max:255',
-        ]);
-
-        Cliente::create($validated);
+        Cliente::create($request->validated());
         return redirect()->route('clientes.index')->with('success', 'Cliente creado exitosamente');
     }
 
@@ -56,19 +47,9 @@ class ClienteController extends Controller
         return view('clientes.edit', compact('cliente'));
     }
 
-    public function update(Request $request, Cliente $cliente)
+    public function update(ClienteRequest $request, Cliente $cliente)
     {
-        $validated = $request->validate([
-            'nombre' => 'sometimes|string|max:255',
-            'telefono' => 'sometimes|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'direccion' => 'nullable|string',
-            'rfc' => 'nullable|string|max:13',
-            'es_empresa' => 'sometimes|boolean',
-            'nombre_empresa' => 'nullable|string|max:255',
-        ]);
-
-        $cliente->update($validated);
+        $cliente->update($request->validated());
         return redirect()->route('clientes.index')->with('success', 'Cliente actualizado exitosamente');
     }
 

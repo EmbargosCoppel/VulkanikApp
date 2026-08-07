@@ -44,6 +44,14 @@
                         <span id="nav-ordenes" style="margin-left: 10px; opacity: 0; transition: opacity 0.3s ease;">Órdenes</span>
                     </a>
                     @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.cobros') }}" style="display: flex; align-items: center; padding: 12px; color: white; text-decoration: none; margin-bottom: 5px; border-radius: 5px; white-space: nowrap; overflow: hidden;">
+                        <i class="fas fa-money-bill-wave" style="font-size: 20px; min-width: 40px; text-align: center;"></i>
+                        <span id="nav-cobros" style="margin-left: 10px; opacity: 0; transition: opacity 0.3s ease;">Cobros</span>
+                    </a>
+                    <a href="{{ route('mecanicos.index') }}" style="display: flex; align-items: center; padding: 12px; color: white; text-decoration: none; margin-bottom: 5px; border-radius: 5px; white-space: nowrap; overflow: hidden;">
+                        <i class="fas fa-user-cog" style="font-size: 20px; min-width: 40px; text-align: center;"></i>
+                        <span id="nav-mecanicos" style="margin-left: 10px; opacity: 0; transition: opacity 0.3s ease;">Mecánicos</span>
+                    </a>
                     <a href="{{ route('refacciones.index') }}" style="display: flex; align-items: center; padding: 12px; color: white; text-decoration: none; margin-bottom: 5px; border-radius: 5px; white-space: nowrap; overflow: hidden;">
                         <i class="fas fa-cogs" style="font-size: 20px; min-width: 40px; text-align: center;"></i>
                         <span id="nav-refacciones" style="margin-left: 10px; opacity: 0; transition: opacity 0.3s ease;">Refacciones</span>
@@ -75,7 +83,12 @@
             </div>
         </div>
 
+        <script src="https://js.stripe.com/v3/"></script>
         <script>
+            @if(config('services.stripe.key'))
+            const stripe = Stripe('{{ config('services.stripe.key') }}');
+            @endif
+            
             function showSidebar() {
                 if (window.innerWidth > 768) {
                     document.getElementById('sidebar').style.width = '250px';
@@ -86,8 +99,12 @@
                     document.getElementById('nav-clientes').style.opacity = '1';
                     document.getElementById('nav-vehiculos').style.opacity = '1';
                     document.getElementById('nav-ordenes').style.opacity = '1';
+                    var m = document.getElementById('nav-mecanicos');
+                    if (m) m.style.opacity = '1';
                     var r = document.getElementById('nav-refacciones');
                     if (r) r.style.opacity = '1';
+                    var c = document.getElementById('nav-cobros');
+                    if (c) c.style.opacity = '1';
                 }
             }
             function hideSidebar() {
@@ -100,8 +117,12 @@
                     document.getElementById('nav-clientes').style.opacity = '0';
                     document.getElementById('nav-vehiculos').style.opacity = '0';
                     document.getElementById('nav-ordenes').style.opacity = '0';
+                    var m = document.getElementById('nav-mecanicos');
+                    if (m) m.style.opacity = '0';
                     var r = document.getElementById('nav-refacciones');
                     if (r) r.style.opacity = '0';
+                    var c = document.getElementById('nav-cobros');
+                    if (c) c.style.opacity = '0';
                 }
             }
             function toggleMobileSidebar() {
@@ -118,6 +139,8 @@
                     document.getElementById('nav-clientes').style.opacity = '1';
                     document.getElementById('nav-vehiculos').style.opacity = '1';
                     document.getElementById('nav-ordenes').style.opacity = '1';
+                    var m = document.getElementById('nav-mecanicos');
+                    if (m) m.style.opacity = '1';
                     var r = document.getElementById('nav-refacciones');
                     if (r) r.style.opacity = '1';
                 }

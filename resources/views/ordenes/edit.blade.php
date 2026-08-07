@@ -18,6 +18,7 @@
     <form action="{{ route('ordenes.update', $ordenTrabajo) }}" method="POST">
         @csrf
         @method('PUT')
+        <input type="hidden" name="redirect_to" value="show">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg">
                 <p class="text-sm text-gray-600">
@@ -55,11 +56,12 @@
                 @else
                 <input type="hidden" name="mecanico_id" value="{{ auth()->id() }}">
                 <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100" value="{{ auth()->user()->name }}" disabled>
-                <p class="text-xs text-gray-500 mt-1">No puedes cambiar el mecánico asignado.</p>
+                <p class="text-xs text-gray-500 mt-1">Solo puedes cambiar el estado de la orden asignada y agregar refacciones.</p>
                 @endif
                 @error('mecanico_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
+            @if(auth()->user()->role === 'admin')
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Diagnóstico</label>
                 <textarea name="diagnostico" rows="3"
@@ -87,15 +89,23 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">{{ $ordenTrabajo->observaciones }}</textarea>
                 @error('observaciones') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
+            @endif
         </div>
 
-        <div class="mt-6 flex justify-end space-x-3">
-            <a href="{{ route('ordenes.index') }}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
-                Cancelar
+        <div class="mt-6 grid gap-3 md:grid-cols-2">
+            @if(auth()->user()->role === 'admin' && !$ordenTrabajo->estaFinalizada())
+            <a href="{{ route('ordenes.pagar', $ordenTrabajo) }}" class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                <i class="fas fa-credit-card mr-2"></i>Cobrar Orden
             </a>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                <i class="fas fa-save mr-2"></i>Actualizar
-            </button>
+            @endif
+            <div class="flex justify-end space-x-3">
+                <a href="{{ route('ordenes.index') }}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    <i class="fas fa-save mr-2"></i>Actualizar
+                </button>
+            </div>
         </div>
     </form>
 </div>

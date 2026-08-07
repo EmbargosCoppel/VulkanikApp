@@ -24,6 +24,10 @@ Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
 
+Route::get('/admin/cobros', [DashboardController::class, 'cobros'])
+    ->middleware(['auth', 'role:admin'])
+    ->name('admin.cobros');
+
 // Profile
 Route::get('/profile', [ProfileController::class, 'edit'])
     ->middleware('auth')

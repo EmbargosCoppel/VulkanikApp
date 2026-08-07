@@ -1,4 +1,3 @@
-ionable por un boton que despliegue una lista porfavor
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -84,6 +83,22 @@ ionable por un boton que despliegue una lista porfavor
                     </div>
                 </div>
             </div>
+
+            <!-- Mecánicos -->
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium" style="color: var(--color-secondary-light);">Mecánicos</p>
+                        <p class="text-3xl font-bold mt-2" style="color: var(--color-secondary);">{{ $stats['mecanicos'] }}</p>
+                        <p class="text-xs mt-2" style="color: var(--color-secondary-light);">
+                            <a href="{{ route('mecanicos.index') }}" class="text-blue-600 hover:text-blue-800">Ver lista de mecánicos</a>
+                        </p>
+                    </div>
+                    <div class="stat-icon" style="background-color: #e8f0fe; color: #1a73e8;">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Status Cards -->
@@ -135,12 +150,12 @@ ionable por un boton que despliegue una lista porfavor
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Recent Orders -->
-            <div class="card">
+            <!-- Orders to Charge -->
+            <div class="card" id="cobros">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-clock mr-2" style="color: var(--color-primary);"></i>
-                        Órdenes Recientes
+                        <i class="fas fa-money-bill-wave mr-2" style="color: var(--color-success);"></i>
+                        Órdenes para Cobrar
                     </h3>
                     <a href="{{ route('ordenes.index') }}" class="text-sm font-medium" style="color: var(--color-primary);">
                         Ver todas <i class="fas fa-arrow-right ml-1"></i>
@@ -148,34 +163,27 @@ ionable por un boton que despliegue una lista porfavor
                 </div>
                 <div class="card-body">
                     <div class="space-y-3">
-                        @forelse($ordenes_recientes as $orden)
-                        <div class="flex items-center justify-between p-4 rounded-lg transition-all duration-300 hover:shadow-md" style="background-color: var(--color-bg-secondary);">
-                            <div class="flex-1">
-                                <p class="font-medium" style="color: var(--color-secondary);">#{{ $orden->id }} - {{ $orden->vehiculo->cliente->nombre }}</p>
-                                <p class="text-sm mt-1" style="color: var(--color-secondary-light);">
-                                    {{ $orden->vehiculo->marca }} {{ $orden->vehiculo->modelo }}
-                                </p>
-                                <p class="text-xs mt-1" style="color: var(--color-secondary-light);">
-                                    {{ $orden->created_at->format('d/m/Y H:i') }}
-                                </p>
+                        @forelse($ordenes_cobrables as $orden)
+                        <div class="flex flex-col gap-3 p-4 rounded-lg transition-all duration-300 hover:shadow-md" style="background-color: var(--color-bg-secondary);">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1">
+                                    <p class="font-medium" style="color: var(--color-secondary);">#{{ $orden->id }} - {{ $orden->vehiculo->cliente->nombre }}</p>
+                                    <p class="text-sm mt-1" style="color: var(--color-secondary-light);">
+                                        {{ $orden->vehiculo->marca }} {{ $orden->vehiculo->modelo }}
+                                    </p>
+                                    <p class="text-xs mt-1" style="color: var(--color-secondary-light);">
+                                        Estado: {{ ucfirst($orden->estado) }} · Total: ${{ number_format($orden->total, 2) }}
+                                    </p>
+                                </div>
+                                <a href="{{ route('ordenes.pagar', $orden) }}" class="inline-flex items-center justify-center px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                    Cobrar
+                                </a>
                             </div>
-                            @php
-                                $badgeClass = match($orden->estado) {
-                                    'pendiente' => 'badge-warning',
-                                    'en_proceso' => 'badge-primary',
-                                    'completada' => 'badge-success',
-                                    'cancelada' => 'badge-error',
-                                    default => 'badge-primary'
-                                };
-                            @endphp
-                            <span class="badge {{ $badgeClass }}">
-                                {{ ucfirst(str_replace('_', ' ', $orden->estado)) }}
-                            </span>
                         </div>
                         @empty
                         <div class="text-center py-8" style="color: var(--color-secondary-light);">
-                            <i class="fas fa-inbox text-4xl mb-2"></i>
-                            <p>No hay órdenes recientes</p>
+                            <i class="fas fa-check-circle text-4xl mb-2" style="color: var(--color-success);"></i>
+                            <p>No hay órdenes disponibles para cobrar</p>
                         </div>
                         @endforelse
                     </div>

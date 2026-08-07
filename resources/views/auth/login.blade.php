@@ -21,7 +21,7 @@
                 Correo Electrónico
             </label>
             <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
-                   class="form-input" placeholder="admin@taller.com">
+                   class="form-input" placeholder="nombre@correo.com">
             <x-input-error :messages="$errors->get('email')" class="form-error" />
         </div>
 

@@ -6,10 +6,10 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-md group-hover:shadow-lg transition-all duration-300">
-                            V
+                        <div class="w-10 h-10 rounded-lg overflow-hidden shadow-md group-hover:shadow-lg transition-all duration-300">
+                            <x-application-logo class="w-full h-full" />
                         </div>
-                        <span class="text-xl font-bold text-gray-800 hidden sm:block">Vulcanizadora</span>
+                        <span class="text-xl font-bold text-gray-800 hidden sm:block">{{ config('app.name', 'Vulcanik') }}</span>
                     </a>
                 </div>
 
@@ -36,6 +36,16 @@
                         <span>Órdenes</span>
                     </a>
                     @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('dashboard') }}#cobros" 
+                       class="nav-link {{ request()->is('/*#cobros') ? 'active' : '' }}">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Cobros</span>
+                    </a>
+                    <a href="{{ route('mecanicos.index') }}" 
+                       class="nav-link {{ request()->routeIs('mecanicos.*') ? 'active' : '' }}">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Mecánicos</span>
+                    </a>
                     <a href="{{ route('refacciones.index') }}" 
                        class="nav-link {{ request()->routeIs('refacciones.*') ? 'active' : '' }}">
                         <i class="fas fa-cogs"></i>
@@ -113,6 +123,16 @@
                 Órdenes
             </a>
             @if(auth()->user()->role === 'admin')
+            <a href="{{ route('dashboard') }}#cobros" 
+               class="responsive-nav-link">
+                <i class="fas fa-money-bill-wave"></i>
+                Cobros
+            </a>
+            <a href="{{ route('mecanicos.index') }}" 
+               class="responsive-nav-link {{ request()->routeIs('mecanicos.*') ? 'active' : '' }}">
+                <i class="fas fa-user-cog"></i>
+                Mecánicos
+            </a>
             <a href="{{ route('refacciones.index') }}" 
                class="responsive-nav-link {{ request()->routeIs('refacciones.*') ? 'active' : '' }}">
                 <i class="fas fa-cogs"></i>

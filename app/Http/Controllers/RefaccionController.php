@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RefaccionRequest;
 use App\Models\Refaccion;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
@@ -38,21 +39,9 @@ class RefaccionController extends Controller
         return view('refacciones.create');
     }
 
-    public function store(Request $request)
+    public function store(RefaccionRequest $request)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'sku' => 'required|string|unique:refacciones,sku',
-            'descripcion' => 'nullable|string',
-            'costo' => 'required|numeric|min:0',
-            'precio_venta' => 'required|numeric|min:0',
-            'stock_actual' => 'required|integer|min:0',
-            'stock_minimo' => 'required|integer|min:0',
-            'ubicacion' => 'nullable|string|max:255',
-            'proveedor' => 'nullable|string|max:255',
-        ]);
-
-        $this->inventoryService->crearRefaccion($validated);
+        $this->inventoryService->crearRefaccion($request->validated());
         return redirect()->route('refacciones.index')->with('success', 'Refacción creada exitosamente');
     }
 
@@ -66,22 +55,9 @@ class RefaccionController extends Controller
         return view('refacciones.edit', compact('refaccion'));
     }
 
-    public function update(Request $request, Refaccion $refaccion)
+    public function update(RefaccionRequest $request, Refaccion $refaccion)
     {
-        $validated = $request->validate([
-            'nombre' => 'sometimes|string|max:255',
-            'sku' => 'sometimes|string|unique:refacciones,sku,' . $refaccion->id,
-            'descripcion' => 'nullable|string',
-            'costo' => 'sometimes|numeric|min:0',
-            'precio_venta' => 'sometimes|numeric|min:0',
-            'stock_actual' => 'sometimes|integer|min:0',
-            'stock_minimo' => 'sometimes|integer|min:0',
-            'ubicacion' => 'nullable|string|max:255',
-            'proveedor' => 'nullable|string|max:255',
-            'activo' => 'sometimes|boolean',
-        ]);
-
-        $refaccion->update($validated);
+        $refaccion->update($request->validated());
         return redirect()->route('refacciones.index')->with('success', 'Refacción actualizada exitosamente');
     }
 
