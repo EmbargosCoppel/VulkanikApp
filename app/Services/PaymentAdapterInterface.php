@@ -6,4 +6,5 @@ interface PaymentAdapterInterface
 {
     public function procesarPago(float $monto, array $datosPago): array;
     public function reembolsar($orden): array;
+    public function generarLinkPago(float $monto, array $datosPago): array;
 }

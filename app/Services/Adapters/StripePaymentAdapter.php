@@ -113,4 +113,63 @@ class StripePaymentAdapter implements PaymentAdapterInterface
     {
         return $this->publicKey;
     }
+
+    public function generarLinkPago(float $monto, array $datosPago): array
+    {
+        try {
+            if (!$this->stripe) {
+                throw new \RuntimeException('Stripe no está configurado. Verifica STRIPE_SECRET en .env');
+            }
+
+            // Crear un producto para el pago
+            $product = $this->stripe->products->create([
+                'name' => $datosPago['descripcion'] ?? 'Pago de Orden de Trabajo',
+            ]);
+
+            // Crear el precio del producto
+            $price = $this->stripe->prices->create([
+                'product' => $product->id,
+                'unit_amount' => (int) round($monto * 100), // Stripe usa centavos
+                'currency' => 'mxn',
+            ]);
+
+            // Crear el Payment Link
+            $paymentLink = $this->stripe->paymentLinks->create([
+                'line_items' => [
+                    [
+                        'price' => $price->id,
+                        'quantity' => 1,
+                    ],
+                ],
+                'after_completion' => [
+                    'type' => 'redirect',
+                    'redirect' => [
+                        'url' => $datosPago['url_retorno'] ?? config('app.url'),
+                    ],
+                ],
+                'metadata' => [
+                    'orden_id' => $datosPago['orden_id'] ?? null,
+                    'cliente_email' => $datosPago['cliente_email'] ?? null,
+                ],
+            ]);
+
+            return [
+                'exitoso' => true,
+                'payment_link_url' => $paymentLink->url,
+                'payment_link_id' => $paymentLink->id,
+                'mensaje' => 'Link de pago generado exitosamente',
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Error al generar link de pago con Stripe', [
+                'error' => $e->getMessage(),
+                'monto' => $monto,
+            ]);
+
+            return [
+                'exitoso' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
 }

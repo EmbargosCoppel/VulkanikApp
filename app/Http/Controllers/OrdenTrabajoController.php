@@ -98,7 +98,9 @@ class OrdenTrabajoController extends Controller
         $validated = $request->validated();
 
         if (auth()->user()->role === 'mecanico') {
-            $validated = array_intersect_key($validated, array_flip(['estado']));
+            // Los mecánicos pueden actualizar: estado, diagnostico, mano_obra, trabajos_realizados
+            $allowedFields = ['estado', 'diagnostico', 'mano_obra', 'trabajos_realizados'];
+            $validated = array_intersect_key($validated, array_flip($allowedFields));
         }
 
         // Actualizar estado primero si se proporciona
@@ -131,8 +133,8 @@ class OrdenTrabajoController extends Controller
             // Ensure model has fresh values before recalculating
             $ordenTrabajo->refresh();
 
-            // Recalcular totales si cambió la mano de obra
-            if (array_key_exists('mano_obra', $validated)) {
+            // Recalcular totales si cambió la mano de obra o las refacciones
+            if (array_key_exists('mano_obra', $validated) || array_key_exists('diagnostico', $validated) || array_key_exists('trabajos_realizados', $validated)) {
                 $this->workOrderService->recalcularTotales($ordenTrabajo);
             }
         }

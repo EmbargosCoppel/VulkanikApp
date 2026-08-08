@@ -52,4 +52,22 @@ class PaymentService
     {
         return $this->paymentAdapter->reembolsar($orden);
     }
+
+    public function generarLinkPago(OrdenTrabajo $orden, string $emailCliente): array
+    {
+        if ($orden->estaFinalizada()) {
+            throw new \InvalidArgumentException("La orden ya está finalizada y pagada");
+        }
+
+        $urlRetorno = route('ordenes.show', $orden);
+        
+        $datosPago = [
+            'orden_id' => $orden->id,
+            'descripcion' => "Pago de Orden #{$orden->id} - " . $orden->vehiculo->cliente->nombre,
+            'cliente_email' => $emailCliente,
+            'url_retorno' => $urlRetorno,
+        ];
+
+        return $this->paymentAdapter->generarLinkPago($orden->total, $datosPago);
+    }
 }

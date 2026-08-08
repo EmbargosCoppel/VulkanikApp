@@ -20,12 +20,12 @@ class WebhookController extends Controller
         $sigHeader = $request->header('Stripe-Signature');
         $endpointSecret = config('services.stripe.webhook_secret');
 
-        // En producción, verificar la firma de Stripe
-        if (config('app.env') === 'production' && $endpointSecret) {
+        // Verificar la firma de Stripe si está configurada
+        if ($endpointSecret) {
             try {
-                // $event = \Stripe\Webhook::constructEvent(
-                //     $payload, $sigHeader, $endpointSecret
-                // );
+                \Stripe\Webhook::constructEvent(
+                    $payload, $sigHeader, $endpointSecret
+                );
             } catch (\Exception $e) {
                 Log::error('Webhook de Stripe: firma inválida', [
                     'error' => $e->getMessage(),
@@ -73,13 +73,37 @@ class WebhookController extends Controller
             $orden = OrdenTrabajo::find($ordenId);
 
             if ($orden && !$orden->estaFinalizada()) {
+                // Verificar si ya existe un pago para esta orden
+                $pagoExistente = \App\Models\Pago::where('orden_trabajo_id', $ordenId)
+                    ->where('transaction_id', $paymentIntent['id'])
+                    ->first();
+
+                if (!$pagoExistente) {
+                    // Crear el registro de pago
+                    \App\Models\Pago::create([
+                        'orden_trabajo_id' => $ordenId,
+                        'transaction_id' => $paymentIntent['id'],
+                        'payment_method' => 'card',
+                        'monto' => $paymentIntent['amount'] / 100, // Stripe usa centavos
+                        'estado' => 'completado',
+                        'moneda' => strtoupper($paymentIntent['currency'] ?? 'mxn'),
+                        'metadata' => [
+                            'payment_intent_status' => $paymentIntent['status'],
+                            'orden_id' => $ordenId,
+                            'cliente_email' => $paymentIntent['metadata']['cliente_email'] ?? null,
+                        ],
+                    ]);
+                }
+
+                // Marcar la orden como finalizada
                 $orden->estado = 'finalizado';
                 $orden->fecha_salida = now();
                 $orden->save();
 
                 Log::info('Orden finalizada por webhook de pago', [
                     'orden_id' => $ordenId,
-                    'payment_intent' => $paymentIntent['id'] ?? null,
+                    'payment_intent' => $paymentIntent['id'],
+                    'monto' => $paymentIntent['amount'] / 100,
                 ]);
             }
         }

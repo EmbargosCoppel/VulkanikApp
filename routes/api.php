@@ -157,6 +157,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->name('api.')->group(functi
     Route::post('ordenes-trabajo/{ordenTrabajo}/pagar', [PaymentController::class, 'procesarPago'])->name('ordenes-trabajo.pagar')->middleware('role:admin');
     Route::post('ordenes-trabajo/{ordenTrabajo}/reembolsar', [PaymentController::class, 'reembolsar'])->name('ordenes-trabajo.reembolsar')->middleware('role:admin');
     Route::get('pagos/config', [PaymentController::class, 'getConfig'])->name('pagos.config')->middleware('role:admin');
+    Route::post('ordenes-trabajo/{ordenTrabajo}/generar-link-pago', [PaymentController::class, 'generarLinkPago'])->name('ordenes-trabajo.generar-link-pago')->middleware('role:admin,mecanico');
 
     // Cotizaciones
     Route::post('cotizaciones/generar', [CotizacionController::class, 'generar'])->name('cotizaciones.generar');

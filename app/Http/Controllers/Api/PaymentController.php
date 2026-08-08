@@ -82,4 +82,41 @@ class PaymentController extends Controller
             'currency' => config('taller.payment.currency', 'mxn'),
         ]);
     }
+
+    /**
+     * Generate a payment link for a work order.
+     */
+    public function generarLinkPago(Request $request, OrdenTrabajo $ordenTrabajo): JsonResponse
+    {
+        $validated = $request->validate([
+            'email_cliente' => 'required|email',
+        ]);
+
+        try {
+            $resultado = $this->paymentService->generarLinkPago($ordenTrabajo, $validated['email_cliente']);
+
+            if (!$resultado['exitoso']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $resultado['error'] ?? 'Error al generar el link de pago',
+                ], 422);
+            }
+
+            return response()->json([
+                'success' => true,
+                'payment_link_url' => $resultado['payment_link_url'],
+                'message' => $resultado['mensaje'],
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el link de pago: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
