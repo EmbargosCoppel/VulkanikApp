@@ -63,6 +63,7 @@ Route::resource('refacciones', RefaccionController::class, ['parameters' => ['re
 
 // Órdenes de Trabajo - admin y mecánico
 Route::resource('ordenes', OrdenTrabajoController::class, ['parameters' => ['ordenes' => 'ordenTrabajo']])->middleware(['auth', 'role:admin,mecanico']);
+Route::get('ordenes/{ordenTrabajo}/pagar', [OrdenTrabajoController::class, 'pagar'])->name('ordenes.pagar')->middleware(['auth', 'role:admin,mecanico']);
 Route::post('ordenes/{ordenTrabajo}/refacciones', [OrdenTrabajoController::class, 'agregarRefaccion'])->name('ordenes.agregarRefaccion')->middleware(['auth', 'role:admin,mecanico']);
 
 require __DIR__.'/auth.php';
