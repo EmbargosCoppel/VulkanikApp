@@ -20,11 +20,13 @@
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
+                    @if(auth()->user()->role === 'admin')
                     <a href="{{ route('clientes.index') }}" 
                        class="nav-link {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
                         <span>Clientes</span>
                     </a>
+                    @endif
                     <a href="{{ route('vehiculos.index') }}" 
                        class="nav-link {{ request()->routeIs('vehiculos.*') ? 'active' : '' }}">
                         <i class="fas fa-car"></i>
@@ -107,11 +109,13 @@
                 <i class="fas fa-home"></i>
                 Dashboard
             </a>
+            @if(auth()->user()->role === 'admin')
             <a href="{{ route('clientes.index') }}" 
                class="responsive-nav-link {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i>
                 Clientes
             </a>
+            @endif
             <a href="{{ route('vehiculos.index') }}" 
                class="responsive-nav-link {{ request()->routeIs('vehiculos.*') ? 'active' : '' }}">
                 <i class="fas fa-car"></i>
