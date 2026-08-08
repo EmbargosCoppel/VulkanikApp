@@ -7,6 +7,7 @@ use App\Http\Controllers\RefaccionController;
 use App\Http\Controllers\OrdenTrabajoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 
 // Ruta de diagnóstico (solo para testing)
 Route::get('/debug', function () {
@@ -23,6 +24,9 @@ Route::get('/debug', function () {
 Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth']);
 
 Route::get('/admin/cobros', [DashboardController::class, 'cobros'])
     ->middleware(['auth', 'role:admin'])
@@ -43,6 +47,10 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])
 
 // Clientes - solo admin
 Route::resource('clientes', ClienteController::class)->middleware(['auth', 'role:admin']);
+
+// Mecánicos - solo admin
+Route::resource('mecanicos', UserController::class)->middleware(['auth', 'role:admin']);
+Route::post('mecanicos/{mecanico}/restore', [UserController::class, 'restore'])->name('mecanicos.restore')->middleware(['auth', 'role:admin']);
 
 // Vehículos - admin y mecánico
 Route::resource('vehiculos', VehiculoController::class)->middleware(['auth', 'role:admin,mecanico']);
