@@ -61,7 +61,6 @@
                 @error('mecanico_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
-            @if(auth()->user()->role === 'admin')
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Diagnóstico</label>
                 <textarea name="diagnostico" rows="3"
@@ -89,7 +88,6 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">{{ $ordenTrabajo->observaciones }}</textarea>
                 @error('observaciones') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
-            @endif
         </div>
 
         <div class="mt-6 grid gap-3 md:grid-cols-2">
