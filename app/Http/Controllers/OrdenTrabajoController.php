@@ -252,6 +252,13 @@ class OrdenTrabajoController extends Controller
         }
 
         try {
+            // Verificar que Stripe esté configurado
+            if (!config('services.stripe.key')) {
+                \Log::error('Stripe no configurado al intentar acceder a página de pago');
+                return redirect()->route('ordenes.show', $ordenTrabajo)
+                    ->with('error', 'El sistema de pagos no está configurado. Contacte al administrador.');
+            }
+
             $ordenTrabajo->load(['vehiculo.cliente', 'refacciones']);
             
             // Asegurar que los totales estén calculados
@@ -264,15 +271,25 @@ class OrdenTrabajoController extends Controller
             
             // Validar que el total sea mayor a 0
             if ($totales['total'] <= 0) {
+                \Log::warning('Intento de cobro sin total válido', [
+                    'orden_id' => $ordenTrabajo->id,
+                    'totales' => $totales,
+                ]);
                 return redirect()->route('ordenes.show', $ordenTrabajo)
                     ->with('error', 'La orden no tiene un total válido para procesar el pago. Verifique que tenga refacciones o mano de obra asignada.');
             }
+            
+            \Log::info('Accediendo a página de pago', [
+                'orden_id' => $ordenTrabajo->id,
+                'total' => $totales['total'],
+            ]);
             
             return view('ordenes.pagar', compact('ordenTrabajo', 'totales'));
         } catch (\Exception $e) {
             \Log::error('Error al cargar página de pago', [
                 'orden_id' => $ordenTrabajo->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             
             return redirect()->route('ordenes.show', $ordenTrabajo)
