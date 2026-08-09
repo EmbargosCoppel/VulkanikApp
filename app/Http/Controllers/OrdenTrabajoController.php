@@ -107,6 +107,12 @@ class OrdenTrabajoController extends Controller
 
         // Actualizar estado primero si se proporciona
         if (isset($validated['estado'])) {
+            // Validar que solo el admin pueda cambiar a finalizado
+            if ($validated['estado'] === 'finalizado' && auth()->user()->role !== 'admin') {
+                return redirect()->route('ordenes.show', $ordenTrabajo)
+                    ->with('error', 'Solo el administrador puede marcar la orden como finalizada');
+            }
+            
             try {
                 $ordenTrabajo = $this->workOrderService->actualizarEstado($ordenTrabajo, $validated['estado']);
             } catch (\InvalidArgumentException $e) {

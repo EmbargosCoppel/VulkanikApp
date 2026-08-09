@@ -36,8 +36,13 @@
                     <option value="diagnóstico" {{ $ordenTrabajo->estado === 'diagnóstico' ? 'selected' : '' }}>Diagnóstico</option>
                     <option value="esperando_piezas" {{ $ordenTrabajo->estado === 'esperando_piezas' ? 'selected' : '' }}>Esperando Piezas</option>
                     <option value="reparación" {{ $ordenTrabajo->estado === 'reparación' ? 'selected' : '' }}>Reparación</option>
+                    @if(auth()->user()->role === 'admin')
                     <option value="finalizado" {{ $ordenTrabajo->estado === 'finalizado' ? 'selected' : '' }}>Finalizado</option>
+                    @endif
                 </select>
+                @if(auth()->user()->role !== 'admin')
+                <p class="text-xs text-gray-500 mt-1">Solo el administrador puede marcar la orden como finalizada.</p>
+                @endif
                 @error('estado') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
