@@ -21,6 +21,34 @@ Route::get('/debug', function () {
     ]);
 });
 
+// Ruta de diagnóstico de pagos (solo para admin)
+Route::get('/debug/pago/{ordenTrabajo}', function (App\Models\OrdenTrabajo $ordenTrabajo) {
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+    
+    try {
+        $ordenTrabajo->load(['vehiculo.cliente', 'refacciones']);
+        $totales = app(\App\Services\WorkOrderService::class)->calcularTotales($ordenTrabajo);
+        
+        return response()->json([
+            'orden_id' => $ordenTrabajo->id,
+            'estado' => $ordenTrabajo->estado,
+            'total' => $ordenTrabajo->total,
+            'totales_calculados' => $totales,
+            'stripe_configurado' => config('services.stripe.key') ? true : false,
+            'refacciones_count' => $ordenTrabajo->refacciones->count(),
+            'vehiculo' => $ordenTrabajo->vehiculo ? 'Cargado' : 'No cargado',
+            'cliente' => $ordenTrabajo->vehiculo->cliente->nombre ?? 'No disponible',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+})->middleware(['auth', 'role:admin']);
+
 Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
