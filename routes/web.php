@@ -66,5 +66,6 @@ Route::resource('ordenes', OrdenTrabajoController::class, ['parameters' => ['ord
 Route::get('ordenes/{ordenTrabajo}/pagar', [OrdenTrabajoController::class, 'pagar'])->name('ordenes.pagar')->middleware(['auth', 'role:admin,mecanico']);
 Route::get('ordenes/{ordenTrabajo}/ticket', [OrdenTrabajoController::class, 'ticket'])->name('ordenes.ticket')->middleware(['auth', 'role:admin,mecanico']);
 Route::post('ordenes/{ordenTrabajo}/refacciones', [OrdenTrabajoController::class, 'agregarRefaccion'])->name('ordenes.agregarRefaccion')->middleware(['auth', 'role:admin,mecanico']);
+Route::delete('ordenes/{ordenTrabajo}/refacciones/{refaccion}', [OrdenTrabajoController::class, 'eliminarRefaccion'])->name('ordenes.eliminarRefaccion')->middleware(['auth', 'role:admin,mecanico']);
 
 require __DIR__.'/auth.php';

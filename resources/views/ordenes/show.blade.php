@@ -146,6 +146,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Unitario</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -156,10 +157,21 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $refaccion->pivot->cantidad }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ number_format($refaccion->pivot->precio_unitario, 2) }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${{ number_format($refaccion->pivot->subtotal, 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        @if($ordenTrabajo->puedeAgregarRefacciones())
+                        <form action="{{ route('ordenes.eliminarRefaccion', [$ordenTrabajo, $refaccion]) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta refacción? Se devolverá el stock al inventario.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-900" title="Eliminar refacción">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        @endif
+                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">No hay refacciones agregadas</td>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No hay refacciones agregadas</td>
                 </tr>
                 @endforelse
             </tbody>

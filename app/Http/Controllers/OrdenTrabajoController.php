@@ -7,6 +7,7 @@ use App\Http\Requests\RefaccionRequest;
 use App\Models\OrdenTrabajo;
 use App\Models\Vehiculo;
 use App\Models\User;
+use App\Models\Refaccion;
 use App\Services\WorkOrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -164,6 +165,43 @@ class OrdenTrabajoController extends Controller
         }
 
         return redirect()->route('ordenes.show', $ordenTrabajo)->with('success', 'Refacción agregada exitosamente');
+    }
+
+    public function eliminarRefaccion(Request $request, OrdenTrabajo $ordenTrabajo, Refaccion $refaccion)
+    {
+        $this->authorizeOrden($ordenTrabajo);
+
+        if ($ordenTrabajo->estaFinalizada()) {
+            return redirect()->route('ordenes.show', $ordenTrabajo)
+                ->with('error', 'No se puede modificar una orden finalizada');
+        }
+
+        try {
+            // Obtener la cantidad de la refacción en la orden
+            $cantidad = $ordenTrabajo->refacciones()->where('refaccion_id', $refaccion->id)->first()?->pivot->cantidad ?? 0;
+            
+            // Remover la relación
+            $ordenTrabajo->refacciones()->detach($refaccion->id);
+            
+            // Devolver el stock
+            if ($cantidad > 0) {
+                $refaccion->increment('stock_actual', $cantidad);
+            }
+            
+            // Recalcular totales
+            $this->workOrderService->recalcularTotales($ordenTrabajo);
+            
+            return redirect()->route('ordenes.show', $ordenTrabajo)->with('success', 'Refacción eliminada exitosamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al eliminar refacción', [
+                'orden_id' => $ordenTrabajo->id,
+                'refaccion_id' => $refaccion->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return redirect()->route('ordenes.show', $ordenTrabajo)
+                ->with('error', 'Error al eliminar la refacción: ' . $e->getMessage());
+        }
     }
 
     public function ticket(OrdenTrabajo $ordenTrabajo)
