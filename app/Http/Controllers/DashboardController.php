@@ -61,8 +61,8 @@ class DashboardController extends Controller
 
     public function cobros(): View
     {
-        $ordenes_cobrables = OrdenTrabajo::with(['vehiculo.cliente', 'mecanico'])
-            ->where('estado', '!=', 'finalizado')
+        // Mostrar todas las órdenes (incluyendo finalizadas) para que el admin pueda ver cuáles necesitan cobro
+        $ordenes_cobrables = OrdenTrabajo::with(['vehiculo.cliente', 'mecanico', 'pagos'])
             ->orderBy('created_at', 'desc')
             ->get();
 
