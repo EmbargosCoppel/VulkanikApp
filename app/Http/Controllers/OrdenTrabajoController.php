@@ -239,34 +239,43 @@ class OrdenTrabajoController extends Controller
 
     public function pagar(OrdenTrabajo $ordenTrabajo)
     {
+        \Log::info('Inicio método pagar', ['orden_id' => $ordenTrabajo->id]);
+        
         $this->authorizeOrden($ordenTrabajo);
 
         // Solo administradores pueden procesar pagos desde la interfaz web
         if (auth()->user()->role !== 'admin') {
+            \Log::warning('Intento de acceso no autorizado a pagar', ['user_id' => auth()->id()]);
             abort(403, 'Solo administradores pueden procesar pagos');
         }
 
         if ($ordenTrabajo->estaFinalizada()) {
+            \Log::info('Intento de cobro en orden finalizada', ['orden_id' => $ordenTrabajo->id]);
             return redirect()->route('ordenes.show', $ordenTrabajo)
                 ->with('error', 'La orden ya está finalizada y pagada');
         }
 
         try {
+            \Log::info('Verificando configuración de Stripe', ['orden_id' => $ordenTrabajo->id]);
+            
             // Verificar que Stripe esté configurado
             if (!config('services.stripe.key')) {
-                \Log::error('Stripe no configurado al intentar acceder a página de pago');
+                \Log::error('Stripe no configurado', ['orden_id' => $ordenTrabajo->id]);
                 return redirect()->route('ordenes.show', $ordenTrabajo)
                     ->with('error', 'El sistema de pagos no está configurado. Contacte al administrador.');
             }
 
+            \Log::info('Cargando relaciones', ['orden_id' => $ordenTrabajo->id]);
             $ordenTrabajo->load(['vehiculo.cliente', 'refacciones']);
             
             // Asegurar que los totales estén calculados
             if (!$ordenTrabajo->total || $ordenTrabajo->total <= 0) {
+                \Log::info('Recalculando totales', ['orden_id' => $ordenTrabajo->id]);
                 $this->workOrderService->recalcularTotales($ordenTrabajo);
                 $ordenTrabajo->refresh();
             }
             
+            \Log::info('Calculando totales', ['orden_id' => $ordenTrabajo->id]);
             $totales = $this->workOrderService->calcularTotales($ordenTrabajo);
             
             // Validar que el total sea mayor a 0
@@ -279,7 +288,7 @@ class OrdenTrabajoController extends Controller
                     ->with('error', 'La orden no tiene un total válido para procesar el pago. Verifique que tenga refacciones o mano de obra asignada.');
             }
             
-            \Log::info('Accediendo a página de pago', [
+            \Log::info('Mostrando vista de pago', [
                 'orden_id' => $ordenTrabajo->id,
                 'total' => $totales['total'],
             ]);
