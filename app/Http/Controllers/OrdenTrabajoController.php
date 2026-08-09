@@ -9,6 +9,7 @@ use App\Models\Vehiculo;
 use App\Models\User;
 use App\Services\WorkOrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrdenTrabajoController extends Controller
 {
@@ -206,10 +207,33 @@ class OrdenTrabajoController extends Controller
                 ->with('error', 'La orden ya está finalizada y pagada');
         }
 
-        $ordenTrabajo->load(['vehiculo.cliente', 'refacciones']);
-        $totales = $this->workOrderService->calcularTotales($ordenTrabajo);
-        
-        return view('ordenes.pagar', compact('ordenTrabajo', 'totales'));
+        try {
+            $ordenTrabajo->load(['vehiculo.cliente', 'refacciones']);
+            
+            // Asegurar que los totales estén calculados
+            if (!$ordenTrabajo->total || $ordenTrabajo->total <= 0) {
+                $this->workOrderService->recalcularTotales($ordenTrabajo);
+                $ordenTrabajo->refresh();
+            }
+            
+            $totales = $this->workOrderService->calcularTotales($ordenTrabajo);
+            
+            // Validar que el total sea mayor a 0
+            if ($totales['total'] <= 0) {
+                return redirect()->route('ordenes.show', $ordenTrabajo)
+                    ->with('error', 'La orden no tiene un total válido para procesar el pago. Verifique que tenga refacciones o mano de obra asignada.');
+            }
+            
+            return view('ordenes.pagar', compact('ordenTrabajo', 'totales'));
+        } catch (\Exception $e) {
+            \Log::error('Error al cargar página de pago', [
+                'orden_id' => $ordenTrabajo->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return redirect()->route('ordenes.show', $ordenTrabajo)
+                ->with('error', 'Error al cargar la página de pago: ' . $e->getMessage());
+        }
     }
 
     public function procesarPago(Request $request, OrdenTrabajo $ordenTrabajo)

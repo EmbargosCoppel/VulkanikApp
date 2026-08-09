@@ -93,10 +93,55 @@
         </div>
     </div>
 
+    <!-- Toast notification -->
+    <div id="toast" class="hidden fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full">
+        <div class="flex items-center">
+            <i id="toastIcon" class="fas mr-3"></i>
+            <div>
+                <p id="toastTitle" class="font-semibold"></p>
+                <p id="toastMessage" class="text-sm"></p>
+            </div>
+        </div>
+    </div>
+
     @if(config('services.stripe.key'))
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        const stripe = Stripe(@json(config('services.stripe.key')));
+    const STRIPE_PUBLIC_KEY = @json(config('services.stripe.key'));
+    const PAYMENT_URL = @json(route('ordenes.procesarPago', $ordenTrabajo));
+    const CSRF_TOKEN = @json(csrf_token());
+    const TICKET_URL = @json(route('ordenes.ticket', $ordenTrabajo));
+
+    function mostrarToast(tipo, titulo, mensaje) {
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        toast.className = 'fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+        
+        if (tipo === 'success') {
+            toast.classList.add('bg-green-500', 'text-white');
+            toastIcon.className = 'fas fa-check-circle mr-3';
+        } else if (tipo === 'error') {
+            toast.classList.add('bg-red-500', 'text-white');
+            toastIcon.className = 'fas fa-exclamation-circle mr-3';
+        } else {
+            toast.classList.add('bg-blue-500', 'text-white');
+            toastIcon.className = 'fas fa-info-circle mr-3';
+        }
+        
+        toastTitle.textContent = titulo;
+        toastMessage.textContent = mensaje;
+        toast.classList.remove('hidden', 'translate-x-full');
+        
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => toast.classList.add('hidden'), 300);
+        }, 5000);
+    }
+
+        const stripe = Stripe(STRIPE_PUBLIC_KEY);
         const elements = stripe.elements();
 
         const cardElement = elements.create('card', {
@@ -151,12 +196,12 @@
                 }
 
                 // 2. Enviar al backend para confirmar el pago
-                const response = await fetch(@json(route('ordenes.procesarPago', $ordenTrabajo)), {
+                const response = await fetch(PAYMENT_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': @json(csrf_token()),
+                        'X-CSRF-TOKEN': CSRF_TOKEN,
                         'X-Requested-With': 'XMLHttpRequest',
                     },
                     body: JSON.stringify({
@@ -175,12 +220,16 @@
                 }
 
                 // 3. Redirigir al ticket
-                window.location.href = result.redirect || @json(route('ordenes.ticket', $ordenTrabajo));
+                mostrarToast('success', 'Éxito', 'Pago procesado exitosamente');
+                setTimeout(() => {
+                    window.location.href = result.redirect || TICKET_URL;
+                }, 1500);
             } catch (err) {
                 errorBox.textContent = 'Error: ' + err.message;
                 submitButton.disabled = false;
                 buttonText.classList.remove('hidden');
                 buttonSpinner.classList.add('hidden');
+                mostrarToast('error', 'Error', err.message);
             }
         });
     </script>
